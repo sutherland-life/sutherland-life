@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sutherland · Life</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════
+     RESET & BASE
+  ═══════════════════════════════════════ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #faf9f6;
+    color: #1a1814;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ═══════════════════════════════════════
+     PAGE SYSTEM
+  ═══════════════════════════════════════ */
+  .page { display: none; }
+  .page.active { display: block; }
+  .fade-in { animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ═══════════════════════════════════════
+     GATE PAGE
+  ═══════════════════════════════════════ */
+  .gate-wrap {
+    min-height: 100vh;
+    background: #0c0b09;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .gate-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .gate-crest {
+    width: 220px;
+    height: auto;
+    display: block;
+    margin: 0 auto 24px;
+  }
+  .gate-wordmark {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #3a3730;
+    margin-bottom: 36px;
+  }
+  .gate-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    color: #f0ede8;
+    margin-bottom: 8px;
+  }
+  .gate-subtitle {
+    font-size: 12px;
+    color: #4a4740;
+    margin-bottom: 40px;
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+  .gate-input {
+    width: 100%;
+    padding: 14px 18px;
+    background: transparent;
+    border: 1px solid #2a2720;
+    border-radius: 2px;
+    color: #f0ede8;
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.18em;
+    margin-bottom: 14px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .gate-input:focus { border-color: #c9a96e; }
+  .gate-input::placeholder { color: #2a2720; }
+  .gate-btn {
+    width: 100%;
+    padding: 14px;
+    background: #c9a96e;
+    border: none;
+    border-radius: 2px;
+    color: #0c0b09;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .gate-btn:hover { background: #d4b87e; }
+  .gate-msg {
+    height: 18px;
+    font-size: 11px;
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .gate-msg.err { color: #c07060; }
+  .gate-msg.ok { color: #7aaa7a; }
+  .gate-footer {
+    margin-top: 48px;
+    font-size: 10px;
+    color: #2a2720;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════════════
+     PUBLIC NAV
+  ═══════════════════════════════════════ */
+  .pub-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(250, 249, 246, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e8e4dc;
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+  }
+  .pub-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    color: #1a1814;
+    margin-right: auto;
+  }
+  .pub-nav-links { display: flex; gap: 2px; margin-right: 28px; }
+  .pub-nav-btn {
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8a8479;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .pub-nav-btn:hover, .pub-nav-btn.active { color: #1a1814; border-bottom-color: #c9a96e; }
+  .pub-admin-btn {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border: 1px solid #d4cfc6;
+    border-radius: 2px;
+    color: #8a8479;
+    cursor: pointer;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .pub-admin-btn:hover { background: #1a1814; color: #faf9f6; border-color: #1a1814; }
+
+  /* ═══════════════════════════════════════
+     PUBLIC SECTIONS
+  ═══════════════════════════════════════ */
+  .pub-tab { display: none; }
+  .pub-tab.active { display: block; animation: fadeUp 0.3s ease both; }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid #e8e4dc;
+    min-height: 480px;
+  }
+  .hero-left {
+    padding: 72px 56px 64px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid #e8e4dc;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #c9a96e;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .hero-h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.6rem);
+    font-weight: 400;
+    line-height: 1.08;
+    color: #1a1814;
+    margin-bottom: 24px;
+  }
+  .hero-h1 em { font-style: italic; color: #c9a96e; }
+  .hero-body { font-size: 15px; line-height: 1.8; color: #6b6660; max-width: 380px; }
+  .hero-right {
+    background: #ede9e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+    padding: 0;
+  }
+  .hero-right img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  /* ─── REPLACE THIS SECTION with your photo ───
+     To add your family photo, replace the .hero-photo-placeholder div below
+     with: <img src="your-photo.jpg" style="width:100%;height:100%;object-fit:cover">
+  ─────────────────────────────────────────── */
+  .hero-photo-placeholder {
+    text-align: center;
+  }
+  .photo-icon {
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid #c4bfb6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .photo-hint { font-size: 11px; color: #a09b94; letter-spacing: 0.1em; text-transform: uppercase; }
+  .photo-hint-small { font-size: 10px; color: #c4bfb6; margin-top: 4px; }
+
+  /* Pub section wrapper */
+  .pub-section { padding: 56px 48px; border-bottom: 1px solid #e8e4dc; }
+  .pub-section:last-child { border-bottom: none; }
+  .sec-eyebrow { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: #c9a96e; margin-bottom: 10px; font-weight: 500; }
+  .sec-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 400; color: #1a1814; margin-bottom: 32px; }
+
+  /* Calendar */
+  .cal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* Carousel (home tab only) */
+  .carousel-wrap { position: relative; }
+  .carousel-track-outer { overflow: hidden; }
+  .carousel-track {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .carousel-track .cal-card {
+    flex: 0 0 calc((100% - 32px) / 3);
+    min-width: 0;
+  }
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .carousel-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e8e4dc;
+    background: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    color: #1a1814;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .carousel-btn:hover { border-color: #c9a96e; color: #c9a96e; }
+  .carousel-btn:disabled { opacity: 0.3; cursor: default; }
+  .carousel-dots {
+    display: flex; gap: 6px; align-items: center; margin-right: auto;
+  }
+  .carousel-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #e8e4dc; cursor: pointer; transition: all 0.2s;
+    border: none; padding: 0;
+  }
+  .carousel-dot.active { background: #c9a96e; width: 18px; border-radius: 3px; }
+
+  .cal-card {
+    border: 1px solid #e8e4dc;
+    border-radius: 2px;
+    padding: 22px;
+    background: #fff;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .cal-card:hover { border-color: #c9a96e; transform: translateY(-2px); }
+  .cal-date-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .cal-day { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 400; font-style: italic; color: #1a1814; line-height: 1; }
+  .cal-month { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9a96e; font-weight: 500; }
+  .cal-title { font-size: 14px; color: #1a1814; margin-bottom: 5px; line-height: 1.4; font-weight: 500; }
+  .cal-meta { font-size: 12px; color: #9a958e; line-height: 1.5; }
+  .cal-tag {
+    display: inline-block;
+    font-size: 9px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-top: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .tag-family { background: #fef3e2; color: #855808; border: 1px solid #f5d99a; }
+  .tag-school { background: #edf5e8; color: #2a5416; border: 1px solid #b8d99a; }
+  .tag-travel { background: #e8f0fb; color: #1a4888; border: 1px solid #99bbf0; }
+  .tag-health { background: #fce8f3; color: #721848; border: 1px solid #e8a8cc; }
+
+  /* Gallery */
+  .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 12px; }
+  .gallery-item {
+    background: #ede9e1;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .gallery-item:hover { opacity: 0.88; }
+  .gallery-item.featured { grid-column: span 2; grid-row: span 2; }
+  .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-placeholder { text-align: center; padding: 20px; }
+  .gallery-placeholder-label { font-size: 10px; color: #a09b94; letter-spacing: 0.1em; text-transform: uppercase; }
+  .gallery-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 10px 14px;
+    background: rgba(26, 24, 20, 0.6);
+    font-size: 11px;
+    color: #faf9f6;
+    letter-spacing: 0.06em;
+  }
+
+  /* Blog / Updates */
+  .blog-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
+  .blog-post { padding-bottom: 32px; margin-bottom: 32px; border-bottom: 1px solid #e8e4dc; }
+  .blog-post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .blog-date { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #c9a96e; margin-bottom: 8px; font-weight: 500; }
+  .blog-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #1a1814;
+    margin-bottom: 10px;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .blog-title:hover { color: #c9a96e; }
+  .blog-excerpt { font-size: 13px; color: #6b6660; line-height: 1.75; }
+  .blog-sidebar { }
+  .sidebar-heading { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8a8479; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e8e4dc; font-weight: 500; }
+  .sidebar-item { padding: 12px 0; border-bottom: 1px solid #e8e4dc; cursor: pointer; }
+  .sidebar-item:last-child { border-bottom: none; }
+  .sidebar-item-title { font-size: 13px; color: #1a1814; line-height: 1.4; transition: color 0.2s; }
+  .sidebar-item:hover .sidebar-item-title { color: #c9a96e; }
+  .sidebar-item-date { font-size: 11px; color: #9a958e; margin-top: 3px; }
+
+  /* ═══════════════════════════════════════
+     ADMIN SHELL
+  ═══════════════════════════════════════ */
+  .admin-shell { background: #0c0b09; min-height: 100vh; color: #e8e4dc; }
+  .admin-nav {
+    border-bottom: 1px solid #1e1c18;
+    padding: 0 36px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 54px;
+    background: #0c0b09;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .admin-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+    color: #c9a96e;
+    letter-spacing: 0.1em;
+    margin-right: 28px;
+  }
+  .admin-nav-btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #4a4740;
+    border: none;
+    background: none;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .admin-nav-btn:hover, .admin-nav-btn.active { color: #e8e4dc; background: #1a1814; }
+  .admin-nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .admin-badge {
+    font-size: 10px;
+    color: #c9a96e;
+    background: rgba(201, 169, 110, 0.1);
+    border: 1px solid rgba(201, 169, 110, 0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+  }
+  .admin-lock-btn {
+    font-size: 10px;
+    color: #4a4740;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: color 0.2s;
+  }
+  .admin-lock-btn:hover { color: #c9a96e; }
+
+  .admin-wrap { padding: 36px 36px 80px; max-width: 1280px; margin: 0 auto; }
+  .admin-greeting { margin-bottom: 40px; }
+  .admin-date-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #4a4740; margin-bottom: 8px; }
+  .admin-greet-text { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 400; font-style: italic; color: #f0ede8; }
+
+  .admin-sec-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3730;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-sec-label::after { content: ''; flex: 1; height: 1px; background: #1e1c18; }
+  .admin-section { margin-bottom: 44px; }
+
+  /* Admin grids */
+  .ag4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .ag3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ag2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+  /* Admin cards */
+  .acard {
+    background: #131210;
+    border: 1px solid #1e1c18;
+    border-radius: 4px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .acard:hover { border-color: #2a2720; }
+  .acard-line { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--line, #c9a96e); }
+  .acard-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #4a4740; margin-bottom: 6px; }
+  .acard-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--val, #e8e4dc);
+    line-height: 1.1;
+  }
+  .acard-sub { font-size: 11px; color: #3a3730; margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e1c18; }
+
+  /* Finance rows */
+  .fin-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #1e1c18; font-size: 12px; }
+  .fin-row:last-child { border-bottom: none; }
+  .fin-k { color: #6b6660; }
+  .c-red { color: #c07060; }
+  .c-green { color: #6aaa6a; }
+  .c-amber { color: #c9a96e; }
+  .c-blue { color: #7aabcc; }
+
+  /* Alerts */
+  .aalert {
+    border-radius: 3px;
+    padding: 11px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .aalert.danger { background: rgba(192, 112, 96, 0.08); border: 1px solid rgba(192, 112, 96, 0.2); }
+  .aalert.warn { background: rgba(201, 169, 110, 0.08); border: 1px solid rgba(201, 169, 110, 0.2); }
+  .aalert.ok { background: rgba(106, 170, 106, 0.08); border: 1px solid rgba(106, 170, 106, 0.2); }
+  .aalert-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .aalert.danger .aalert-dot { background: #c07060; }
+  .aalert.warn .aalert-dot { background: #c9a96e; }
+  .aalert.ok .aalert-dot { background: #6aaa6a; }
+  .aalert-title { font-size: 11px; color: #e8e4dc; margin-bottom: 2px; font-weight: 500; }
+  .aalert-body { font-size: 10px; color: #4a4740; line-height: 1.5; }
+
+  /* Quick link tiles */
+  .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .link-tile {
+    background: #131210;
+    border: 1px solid #1e1c18;
+    border-radius: 4px;
+    padding: 18px;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+  }
+  .link-tile:hover { border-color: #c9a96e; background: #1a1814; }
+  .link-tile-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 3px;
+    background: var(--ti, rgba(201, 169, 110, 0.1));
+    border: 1px solid var(--tb, rgba(201, 169, 110, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: #c9a96e;
+  }
+  .link-tile-name { font-size: 13px; color: #e8e4dc; margin-bottom: 4px; font-weight: 500; }
+  .link-tile-desc { font-size: 11px; color: #4a4740; line-height: 1.5; }
+  .link-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .b-live { background: rgba(106, 170, 106, 0.12); color: #6aaa6a; border: 1px solid rgba(106, 170, 106, 0.2); }
+  .b-ext { background: rgba(122, 171, 204, 0.1); color: #7aabcc; border: 1px solid rgba(122, 171, 204, 0.2); }
+
+  /* Progress bars */
+  .prog-track { height: 3px; background: #1e1c18; border-radius: 20px; overflow: hidden; margin-top: 8px; }
+  .prog-fill { height: 100%; border-radius: 20px; background: var(--pc, #c9a96e); }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 260px; }
+    .pub-nav { padding: 0 20px; }
+    .pub-nav-links { display: none; }
+    .cal-grid { grid-template-columns: 1fr; }
+    .carousel-track .cal-card { flex: 0 0 100%; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery-item.featured { grid-column: span 2; }
+    .blog-layout { grid-template-columns: 1fr; }
+    .pub-section { padding: 40px 20px; }
+    .admin-wrap { padding: 24px 20px 60px; }
+    .ag4, .ag3, .ag2 { grid-template-columns: repeat(2, 1fr); }
+    .link-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-nav { padding: 0 20px; }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #faf9f6; }
+  ::-webkit-scrollbar-thumb { background: #d4cfc6; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE 1 — GATE (everyone lands here first)
+════════════════════════════════════════════════════════════ -->
+<div id="page-gate" class="page active">
+  <div class="gate-wrap">
+    <div class="gate-card fade-in">
+      <img src="Sutherland_IV.png" alt="Sutherland IV" class="gate-crest">
+      <div class="gate-title">Welcome</div>
+      <div class="gate-subtitle">
+        This is a private family site.<br>
+        Enter your password to continue.
+      </div>
+      <input
+        class="gate-input"
+        type="password"
+        id="gate-pw"
+        placeholder="· · · · · · · ·"
+        autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') tryLogin()"
+      />
+      <button class="gate-btn" onclick="tryLogin()">Enter</button>
+      <div class="gate-msg" id="gate-msg">&nbsp;</div>
+      <div class="gate-footer">Al Ain · United Arab Emirates</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE 2 — PUBLIC FAMILY SITE
+════════════════════════════════════════════════════════════ -->
+<div id="page-public" class="page">
+
+  <nav class="pub-nav">
+    <div class="pub-brand">
+      <img src="Sutherland_IV_White.png" alt="Sutherland IV" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:10px;">
+      <span style="vertical-align:middle;">Sutherland &nbsp;·&nbsp; Life</span>
+    </div>
+    <div class="pub-nav-links">
+      <button class="pub-nav-btn active" onclick="pubTab('home', this)">Home</button>
+      <button class="pub-nav-btn" onclick="pubTab('calendar', this)">Calendar</button>
+      <button class="pub-nav-btn" onclick="pubTab('gallery', this)">Gallery</button>
+      <button class="pub-nav-btn" onclick="pubTab('updates', this)">Updates</button>
+    </div>
+    <button class="pub-admin-btn" onclick="showPage('page-gate')">Admin ↗</button>
+  </nav>
+
+  <!-- HOME TAB -->
+  <div id="pub-home" class="pub-tab active">
+
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">The Sutherland Family</div>
+        <h1 class="hero-h1">
+          Our home,<br>
+          <em>two cities,</em><br>
+          one family.
+        </h1>
+        <p class="hero-body">
+          Welcome to our little corner of the internet. A place to keep up with where we are,
+          what we're up to, and what's coming next — whether you're in Al Ain or back in the UK.
+        </p>
+      </div>
+      <div class="hero-right">
+        <img src="family.jpeg" alt="The Sutherland family">
+      </div>
+    </div>
+
+    <div class="pub-section">
+      <div class="sec-eyebrow">Coming Up</div>
+      <div class="sec-title">What's happening soon</div>
+      <div class="carousel-wrap" id="home-carousel">
+        <div class="carousel-track-outer">
+          <div class="carousel-track" id="home-carousel-track">
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">5</div><div class="cal-month">Apr</div></div>
+              <div class="cal-title">Family Visit (Ruth and Tim)</div>
+              <div class="cal-meta">A slice of the UK for Easter Sunday</div>
+              <div class="cal-tag tag-family">Family</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">28</div><div class="cal-month">Apr</div></div>
+              <div class="cal-title">Perry's 40th Birthday</div>
+              <div class="cal-meta">What a time to be alive</div>
+              <div class="cal-tag tag-family">Family</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">1</div><div class="cal-month">May</div></div>
+              <div class="cal-title">Perry's 40th Birthday Party</div>
+              <div class="cal-meta">Creating memories with the fam...</div>
+              <div class="cal-tag tag-family">Family</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">22</div><div class="cal-month">May</div></div>
+              <div class="cal-title">Sutherland UK</div>
+              <div class="cal-meta">A trip back to where it started</div>
+              <div class="cal-tag tag-travel">Travel</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">27</div><div class="cal-month">May</div></div>
+              <div class="cal-title">IBIZA!!!</div>
+              <div class="cal-meta">Adult Play time...</div>
+              <div class="cal-tag tag-travel">Travel</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">30</div><div class="cal-month">May</div></div>
+              <div class="cal-title">Uncle Rowan's Birthday</div>
+              <div class="cal-meta">&nbsp;</div>
+              <div class="cal-tag tag-family">Family</div>
+            </div>
+            <div class="cal-card">
+              <div class="cal-date-row"><div class="cal-day">24</div><div class="cal-month">Jun</div></div>
+              <div class="cal-title">Danielle's Birthday</div>
+              <div class="cal-meta">What a time to be alive...</div>
+              <div class="cal-tag tag-family">Family</div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <div class="carousel-dots" id="home-carousel-dots"></div>
+          <button class="carousel-btn" id="home-prev" onclick="carouselMove('home', -1)" aria-label="Previous">&#8592;</button>
+          <button class="carousel-btn" id="home-next" onclick="carouselMove('home', 1)" aria-label="Next">&#8594;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-section">
+      <div class="sec-eyebrow">Latest</div>
+      <div class="sec-title">From the family</div>
+      <div class="blog-layout">
+        <div>
+          <div class="blog-post">
+            <div class="blog-date">3 April 2026</div>
+            <div class="blog-title">It's Good Friday!</div>
+            <p class="blog-excerpt">
+              We got no bun, No Hardo' (Hard dough) bread and no Fried Fish!!!
+              It's a first... and I need to plan better next year to make sure its the last.
+            </p>
+          </div>
+          <div class="blog-post">
+            <div class="blog-date">31 March 2026</div>
+            <div class="blog-title">March flew by... (Pun intended) We didn't even get to the Beach!</div>
+            <p class="blog-excerpt">
+              After a hectic few weeks with everything happening, it was wonderful to spend a few weekends on
+              concrete... Doing shopping! Soft Play and fun at the Sci-Fi Land. Pictures in the gallery.
+            </p>
+          </div>
+        </div>
+        <div class="blog-sidebar">
+          <div class="sidebar-heading">Earlier updates</div>
+          <div class="sidebar-item">
+            <div class="sidebar-item-title">Harvey's 10th Birthday</div>
+            <div class="sidebar-item-date">4 February 2026</div>
+          </div>
+          <div class="sidebar-item">
+            <div class="sidebar-item-title">Angela's here for the weekend :)</div>
+            <div class="sidebar-item-date">4 February 2026</div>
+          </div>
+          <div class="sidebar-item">
+            <div class="sidebar-item-title">Sutherland & Constantine Yacht day</div>
+            <div class="sidebar-item-date">31 January 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pub-home -->
+
+  <!-- CALENDAR TAB -->
+  <div id="pub-calendar" class="pub-tab">
+    <div class="pub-section">
+      <div class="sec-eyebrow">Family Calendar</div>
+      <div class="sec-title">April – June 2026</div>
+      <div class="cal-grid">
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">5</div><div class="cal-month">Apr</div></div><div class="cal-title">Family Visit (Ruth and Tim)</div><div class="cal-meta">A slice of the UK for Easter Sunday</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">28</div><div class="cal-month">Apr</div></div><div class="cal-title">Perry's 40th Birthday</div><div class="cal-meta">What a time to be alive</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">1</div><div class="cal-month">May</div></div><div class="cal-title">Perry's 40th Birthday Party</div><div class="cal-meta">Creating memories with the fam...</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">22</div><div class="cal-month">May</div></div><div class="cal-title">Sutherland UK</div><div class="cal-meta">A trip back to where it started</div><div class="cal-tag tag-travel">Travel</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">27</div><div class="cal-month">May</div></div><div class="cal-title">IBIZA!!!</div><div class="cal-meta">Adult Play time...</div><div class="cal-tag tag-travel">Travel</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">30</div><div class="cal-month">May</div></div><div class="cal-title">Uncle Rowan's Birthday</div><div class="cal-meta">&nbsp;</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">24</div><div class="cal-month">Jun</div></div><div class="cal-title">Danielle's Birthday</div><div class="cal-meta">What a time to be alive...</div><div class="cal-tag tag-family">Family</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY TAB -->
+  <div id="pub-gallery" class="pub-tab">
+    <div class="pub-section">
+      <div class="sec-eyebrow">Photos &amp; Videos</div>
+      <div class="sec-title">Recent memories</div>
+      <div class="gallery-grid">
+        <!-- ═══════════════════════════════════════════════════
+             TO ADD PHOTOS: Replace the .gallery-placeholder divs with:
+             <img src="your-photo.jpg" alt="description">
+             TO ADD VIDEOS: Use:
+             <video src="your-video.mp4" controls style="width:100%;height:100%;object-fit:cover">
+             The first item has class "featured" and appears larger.
+        ═══════════════════════════════════════════════════ -->
+        <div class="gallery-item featured">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Featured photo</div></div>
+          <div class="gallery-caption">March beach day</div>
+        </div>
+        <div class="gallery-item">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Photo</div></div>
+          <div class="gallery-caption">Valentine's dinner</div>
+        </div>
+        <div class="gallery-item">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Video</div></div>
+          <div class="gallery-caption">Kids at the pool</div>
+        </div>
+        <div class="gallery-item">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Photo</div></div>
+          <div class="gallery-caption">Al Ain park</div>
+        </div>
+        <div class="gallery-item">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Photo</div></div>
+          <div class="gallery-caption">Christmas morning</div>
+        </div>
+        <div class="gallery-item">
+          <div class="gallery-placeholder"><div class="gallery-placeholder-label">Video</div></div>
+          <div class="gallery-caption">New Year's Eve</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATES TAB -->
+  <div id="pub-updates" class="pub-tab">
+    <div class="pub-section">
+      <div class="sec-eyebrow">Family Updates</div>
+      <div class="sec-title">All posts</div>
+      <div class="blog-layout">
+        <div>
+          <div class="blog-post">
+            <div class="blog-date">3 April 2026</div>
+            <div class="blog-title">It's Good Friday!</div>
+            <p class="blog-excerpt">We got no bun, No Hardo' (Hard dough) bread and no Fried Fish!!! It's a first... and I need to plan better next year to make sure its the last.</p>
+          </div>
+          <div class="blog-post">
+            <div class="blog-date">31 March 2026</div>
+            <div class="blog-title">March flew by... (Pun intended) We didn't even get to the Beach!</div>
+            <p class="blog-excerpt">After a hectic few weeks with everything happening, it was wonderful to spend a few weekends on concrete... Doing shopping! Soft Play and fun at the Sci-Fi Land. Pictures in the gallery.</p>
+          </div>
+          <div class="blog-post">
+            <div class="blog-date">14 February 2026</div>
+            <div class="blog-title">Valentine's at the Sofitel — a rare night off for us two</div>
+            <p class="blog-excerpt">Perry surprised us both with a night at the Sofitel Abu Dhabi. It's become a bit of a tradition now. Dinner was extraordinary, the kids were blissfully unaware and brilliantly looked after.</p>
+          </div>
+        </div>
+        <div class="blog-sidebar">
+          <div class="sidebar-heading">Archive</div>
+          <div class="sidebar-item"><div class="sidebar-item-title">Harvey's 10th Birthday</div><div class="sidebar-item-date">4 February 2026</div></div>
+          <div class="sidebar-item"><div class="sidebar-item-title">Angela's here for the weekend :)</div><div class="sidebar-item-date">4 February 2026</div></div>
+          <div class="sidebar-item"><div class="sidebar-item-title">Sutherland & Constantine Yacht day</div><div class="sidebar-item-date">31 January 2026</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-public -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE 3 — ADMIN BACK OFFICE
+════════════════════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="admin-shell">
+
+    <nav class="admin-nav">
+      <div class="admin-brand">
+        <img src="Sutherland_IV.png" alt="Sutherland IV" style="height:28px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;opacity:0.9;">
+        <span style="vertical-align:middle;">PS / Admin</span>
+      </div>
+      <button class="admin-nav-btn active">Dashboard</button>
+      <button class="admin-nav-btn">Finance</button>
+      <button class="admin-nav-btn">School</button>
+      <button class="admin-nav-btn">Links</button>
+      <div class="admin-nav-right">
+        <div class="admin-badge">Admin</div>
+        <button class="admin-lock-btn" onclick="lockAndExit()">Lock &amp; exit ↩</button>
+      </div>
+    </nav>
+
+    <div class="admin-wrap fade-in">
+
+      <div class="admin-greeting">
+        <div class="admin-date-label" id="admin-date">Wednesday 2 April 2026</div>
+        <div class="admin-greet-text">Good morning, Perry.</div>
+      </div>
+
+      <!-- Finance snapshot -->
+      <div class="admin-section">
+        <div class="admin-sec-label">Finance snapshot · Apr 2026</div>
+        <div class="ag4" style="margin-bottom: 12px;">
+          <div class="acard" style="--line:#6aaa6a">
+            <div class="acard-line"></div>
+            <div class="acard-label">Monthly salary</div>
+            <div class="acard-value" style="--val:#6aaa6a">40,000</div>
+            <div class="acard-sub">AED · paid ~27th each month</div>
+          </div>
+          <div class="acard" style="--line:#c07060">
+            <div class="acard-line"></div>
+            <div class="acard-label">Debt payments</div>
+            <div class="acard-value" style="--val:#c07060">24,122</div>
+            <div class="acard-sub">60.3% of salary · all obligations</div>
+          </div>
+          <div class="acard" style="--line:#c9a96e">
+            <div class="acard-line"></div>
+            <div class="acard-label">Card balances</div>
+            <div class="acard-value" style="--val:#c9a96e">76,821</div>
+            <div class="acard-sub">TP 48,423 · 365 card 28,398</div>
+          </div>
+          <div class="acard" style="--line:#7aabcc">
+            <div class="acard-line"></div>
+            <div class="acard-label">GBP invested</div>
+            <div class="acard-value" style="--val:#7aabcc">50,000</div>
+            <div class="acard-sub">Target met ✓ · UK portfolio</div>
+          </div>
+        </div>
+        <div class="ag2">
+          <div class="acard">
+            <div class="acard-label" style="margin-bottom:14px">Monthly obligations</div>
+            <div class="fin-row"><div class="fin-k">ADCB loan EMI</div><div class="c-red">11,955 AED</div></div>
+            <div class="fin-row"><div class="fin-k">J8 car finance</div><div class="c-red">2,167 AED</div></div>
+            <div class="fin-row"><div class="fin-k">Card finance charges (Mar)</div><div class="c-red">3,037 AED</div></div>
+            <div class="fin-row"><div class="fin-k">Auto savings transfer</div><div class="c-green">1,000 AED</div></div>
+            <div class="fin-row"><div class="fin-k">Emergency fund balance</div><div class="c-amber">2,400 / 30,000</div></div>
+            <div class="fin-row"><div class="fin-k">Loan (refinanced Jan '26)</div><div class="c-amber">494,882 AED left</div></div>
+          </div>
+          <div class="acard">
+            <div class="acard-label" style="margin-bottom:14px">Alerts</div>
+            <div class="aalert danger">
+              <div class="aalert-dot"></div>
+              <div>
+                <div class="aalert-title">Credit cards at 95%+ utilisation</div>
+                <div class="aalert-body">TP card 96.8% · 365 card 94.7% · Combined finance charges ~3,037 AED/month</div>
+              </div>
+            </div>
+            <div class="aalert danger">
+              <div class="aalert-dot"></div>
+              <div>
+                <div class="aalert-title">Debt-to-income ratio 60%</div>
+                <div class="aalert-body">22,122 AED/month committed before any living costs</div>
+              </div>
+            </div>
+            <div class="aalert warn">
+              <div class="aalert-dot"></div>
+              <div>
+                <div class="aalert-title">ATM cash — 32,500 AED over 6 months</div>
+                <div class="aalert-body">Untracked spend averaging 5,417 AED/month</div>
+              </div>
+            </div>
+            <div class="aalert ok">
+              <div class="aalert-dot"></div>
+              <div>
+                <div class="aalert-title">GBP 50,000 investment target met</div>
+                <div class="aalert-body">Primary hedge against AED concentration risk</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Savings progress -->
+      <div class="admin-section">
+        <div class="admin-sec-label">Savings pots</div>
+        <div class="ag3">
+          <div class="acard">
+            <div class="acard-label">GBP investment</div>
+            <div class="acard-value" style="--val:#6aaa6a; font-size:1.3rem">50,000 GBP</div>
+            <div class="prog-track"><div class="prog-fill" style="width:100%;--pc:#6aaa6a"></div></div>
+            <div class="acard-sub">Target reached ✓</div>
+          </div>
+          <div class="acard">
+            <div class="acard-label">Emergency fund</div>
+            <div class="acard-value" style="--val:#7aabcc; font-size:1.3rem">2,400 AED</div>
+            <div class="prog-track"><div class="prog-fill" style="width:8%;--pc:#7aabcc"></div></div>
+            <div class="acard-sub">Target 30,000 AED · 8% there</div>
+          </div>
+          <div class="acard">
+            <div class="acard-label">Rainy day fund</div>
+            <div class="acard-value" style="--val:#7aabcc; font-size:1.3rem">100 GBP</div>
+            <div class="prog-track"><div class="prog-fill" style="width:2%;--pc:#7aabcc"></div></div>
+            <div class="acard-sub">Target 5,000 GBP · 2% there</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="admin-section">
+        <div class="admin-sec-label">Quick links</div>
+        <div class="link-grid">
+          <!-- ═══ ADD YOUR REAL URLS IN THE href="" ATTRIBUTES BELOW ═══ -->
+          <a href="sutherland_finance_dashboard.html" class="link-tile" style="--ti:rgba(201,169,110,0.1);--tb:rgba(201,169,110,0.2)">
+            <div class="link-tile-icon">$</div>
+            <div class="link-tile-name">Finance dashboard</div>
+            <div class="link-tile-desc">ADCB · full 6-month view</div>
+            <div class="link-badge b-live">Live</div>
+          </a>
+          <a href="https://docs.google.com/spreadsheets" target="_blank" class="link-tile" style="--ti:rgba(106,170,106,0.1);--tb:rgba(106,170,106,0.2)">
+            <div class="link-tile-icon">G</div>
+            <div class="link-tile-name">Google Sheets</div>
+            <div class="link-tile-desc">Expense &amp; budget tracker</div>
+            <div class="link-badge b-live">Live</div>
+          </a>
+          <a href="https://www.barclays.co.uk" target="_blank" class="link-tile" style="--ti:rgba(122,171,204,0.1);--tb:rgba(122,171,204,0.2)">
+            <div class="link-tile-icon">B</div>
+            <div class="link-tile-name">Barclays UK</div>
+            <div class="link-tile-desc">GBP account &amp; investments</div>
+            <div class="link-badge b-ext">External</div>
+          </a>
+          <a href="https://www.adcb.com" target="_blank" class="link-tile" style="--ti:rgba(122,171,204,0.1);--tb:rgba(122,171,204,0.2)">
+            <div class="link-tile-icon">A</div>
+            <div class="link-tile-name">ADCB Online</div>
+            <div class="link-tile-desc">UAE banking portal</div>
+            <div class="link-badge b-ext">External</div>
+          </a>
+          <a href="https://claude.ai" target="_blank" class="link-tile" style="--ti:rgba(167,139,250,0.1);--tb:rgba(167,139,250,0.2)">
+            <div class="link-tile-icon">C</div>
+            <div class="link-tile-name">Claude.ai</div>
+            <div class="link-tile-desc">AI assistant</div>
+            <div class="link-badge b-ext">External</div>
+          </a>
+          <a href="https://drive.google.com" target="_blank" class="link-tile" style="--ti:rgba(201,169,110,0.1);--tb:rgba(201,169,110,0.2)">
+            <div class="link-tile-icon">D</div>
+            <div class="link-tile-name">Google Drive</div>
+            <div class="link-tile-desc">Docs, PDFs, lesson plans</div>
+            <div class="link-badge b-ext">External</div>
+          </a>
+          <a href="https://mail.google.com" target="_blank" class="link-tile" style="--ti:rgba(106,170,106,0.1);--tb:rgba(106,170,106,0.2)">
+            <div class="link-tile-icon">@</div>
+            <div class="link-tile-name">Gmail</div>
+            <div class="link-tile-desc">Email</div>
+            <div class="link-badge b-ext">External</div>
+          </a>
+          <a href="https://calendar.google.com" target="_blank" class="link-tile" style="--ti:rgba(80,80,80,0.1);--tb:rgba(80,80,80,0.2)">
+            <div class="link-tile-icon">+</div>
+            <div class="link-tile-name">Add new link</div>
+            <div class="link-tile-desc">Edit the HTML to add more</div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /page-admin -->
+
+<script>
+  /* ════════════════════════════════════════
+     PASSWORDS — CHANGE THESE BEFORE GOING LIVE
+  ════════════════════════════════════════ */
+  const FAMILY_PASSWORD = 'sutherland';      // Share this with family
+  const ADMIN_PASSWORD  = 'sutherland2026';  // Keep this private — gives admin access
+
+  /* ════════════════════════════════════════
+     PAGE NAVIGATION
+  ════════════════════════════════════════ */
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function lockAndExit() {
+    showPage('page-gate');
+    document.getElementById('gate-pw').value = '';
+    document.getElementById('gate-msg').textContent = '\u00a0';
+  }
+
+  /* ════════════════════════════════════════
+     LOGIN
+  ════════════════════════════════════════ */
+  function tryLogin() {
+    const val = document.getElementById('gate-pw').value.trim();
+    const msg = document.getElementById('gate-msg');
+
+    if (val === ADMIN_PASSWORD) {
+      msg.className = 'gate-msg ok';
+      msg.textContent = 'Admin access granted.';
+      setTimeout(() => {
+        msg.textContent = '\u00a0';
+        document.getElementById('gate-pw').value = '';
+        showPage('page-admin');
+        setAdminDate();
+      }, 700);
+    } else if (val === FAMILY_PASSWORD) {
+      msg.className = 'gate-msg ok';
+      msg.textContent = 'Welcome to the family site.';
+      setTimeout(() => {
+        msg.textContent = '\u00a0';
+        document.getElementById('gate-pw').value = '';
+        showPage('page-public');
+      }, 700);
+    } else {
+      msg.className = 'gate-msg err';
+      msg.textContent = 'Incorrect password — try again.';
+      document.getElementById('gate-pw').value = '';
+      setTimeout(() => { msg.textContent = '\u00a0'; }, 3000);
+    }
+  }
+
+  /* ════════════════════════════════════════
+     PUBLIC TABS
+  ════════════════════════════════════════ */
+  function pubTab(id, btn) {
+    document.querySelectorAll('.pub-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('pub-' + id).classList.add('active');
+    document.querySelectorAll('.pub-nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ════════════════════════════════════════
+     LIVE DATE IN ADMIN
+  ════════════════════════════════════════ */
+  function setAdminDate() {
+    const now = new Date();
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const str = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+    const el = document.getElementById('admin-date');
+    if (el) el.textContent = str;
+  }
+
+  /* ════════════════════════════════════════
+     CAROUSEL
+  ════════════════════════════════════════ */
+  const carousels = {};
+
+  function initCarousel(id) {
+    const track = document.getElementById(id + '-carousel-track');
+    if (!track) return;
+    const cards = track.querySelectorAll('.cal-card');
+    const total = cards.length;
+    const visible = window.innerWidth <= 900 ? 1 : 3;
+    const pages = total - visible + 1;
+    carousels[id] = { current: 0, total, visible, pages };
+
+    // Build dots
+    const dotsEl = document.getElementById(id + '-carousel-dots');
+    if (dotsEl) {
+      dotsEl.innerHTML = '';
+      for (let i = 0; i < pages; i++) {
+        const d = document.createElement('button');
+        d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => carouselGoTo(id, i);
+        dotsEl.appendChild(d);
+      }
+    }
+    updateCarousel(id);
+  }
+
+  function updateCarousel(id) {
+    const c = carousels[id];
+    const track = document.getElementById(id + '-carousel-track');
+    const visible = window.innerWidth <= 900 ? 1 : 3;
+    const gap = 16;
+    const totalGaps = visible - 1;
+    const cardW = (track.parentElement.offsetWidth - gap * totalGaps) / visible;
+    const offset = c.current * (cardW + gap);
+    track.style.transform = `translateX(-${offset}px)`;
+
+    // Update dots
+    const dots = document.querySelectorAll(`#${id}-carousel-dots .carousel-dot`);
+    dots.forEach((d, i) => d.classList.toggle('active', i === c.current));
+
+    // Update buttons
+    const prev = document.getElementById(id + '-prev');
+    const next = document.getElementById(id + '-next');
+    if (prev) prev.disabled = c.current === 0;
+    if (next) next.disabled = c.current >= c.pages - 1;
+  }
+
+  function carouselMove(id, dir) {
+    const c = carousels[id];
+    c.current = Math.max(0, Math.min(c.pages - 1, c.current + dir));
+    updateCarousel(id);
+  }
+
+  function carouselGoTo(id, idx) {
+    carousels[id].current = idx;
+    updateCarousel(id);
+  }
+
+  // Init on load + resize
+  window.addEventListener('load', () => {
+    initCarousel('home');
+    setAdminDate();
+    const pw = document.getElementById('gate-pw');
+    if (pw) pw.focus();
+  });
+  window.addEventListener('resize', () => { initCarousel('home'); });
+
+
+</script>
+</body>
+</html>
