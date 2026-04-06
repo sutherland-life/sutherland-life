@@ -46,10 +46,11 @@
     text-align: center;
   }
   .gate-crest {
-    width: 220px;
+    width: 160px;
     height: auto;
     display: block;
-    margin: 0 auto 24px;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 0 24px rgba(201,169,110,0.15));
   }
   .gate-wordmark {
     font-family: 'Playfair Display', serif;
@@ -226,16 +227,6 @@
     gap: 12px;
     position: relative;
     overflow: hidden;
-    min-height: 480px;
-    padding: 0;
-  }
-  .hero-right img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
   }
   /* ─── REPLACE THIS SECTION with your photo ───
      To add your family photo, replace the .hero-photo-placeholder div below
@@ -265,50 +256,6 @@
 
   /* Calendar */
   .cal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-
-  /* Carousel (home tab only) */
-  .carousel-wrap { position: relative; }
-  .carousel-track-outer { overflow: hidden; }
-  .carousel-track {
-    display: flex;
-    gap: 16px;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-  .carousel-track .cal-card {
-    flex: 0 0 calc((100% - 32px) / 3);
-    min-width: 0;
-  }
-  .carousel-controls {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 20px;
-  }
-  .carousel-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: 1px solid #e8e4dc;
-    background: #fff;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    color: #1a1814;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .carousel-btn:hover { border-color: #c9a96e; color: #c9a96e; }
-  .carousel-btn:disabled { opacity: 0.3; cursor: default; }
-  .carousel-dots {
-    display: flex; gap: 6px; align-items: center; margin-right: auto;
-  }
-  .carousel-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #e8e4dc; cursor: pointer; transition: all 0.2s;
-    border: none; padding: 0;
-  }
-  .carousel-dot.active { background: #c9a96e; width: 18px; border-radius: 3px; }
-
   .cal-card {
     border: 1px solid #e8e4dc;
     border-radius: 2px;
@@ -582,7 +529,6 @@
     .pub-nav { padding: 0 20px; }
     .pub-nav-links { display: none; }
     .cal-grid { grid-template-columns: 1fr; }
-    .carousel-track .cal-card { flex: 0 0 100%; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
     .gallery-item.featured { grid-column: span 2; }
     .blog-layout { grid-template-columns: 1fr; }
@@ -607,7 +553,8 @@
 <div id="page-gate" class="page active">
   <div class="gate-wrap">
     <div class="gate-card fade-in">
-      <img src="Sutherland_IV.png" alt="Sutherland IV" class="gate-crest">
+      <img src="crest.png" alt="Sutherland clan crest" class="gate-crest">
+      <div class="gate-wordmark">Sutherland · Life</div>
       <div class="gate-title">Welcome</div>
       <div class="gate-subtitle">
         This is a private family site.<br>
@@ -634,10 +581,7 @@
 <div id="page-public" class="page">
 
   <nav class="pub-nav">
-    <div class="pub-brand">
-      <img src="Sutherland_IV_White.png" alt="Sutherland IV" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:10px;">
-      <span style="vertical-align:middle;">Sutherland &nbsp;·&nbsp; Life</span>
-    </div>
+    <div class="pub-brand">Sutherland &nbsp;·&nbsp; Life</div>
     <div class="pub-nav-links">
       <button class="pub-nav-btn active" onclick="pubTab('home', this)">Home</button>
       <button class="pub-nav-btn" onclick="pubTab('calendar', this)">Calendar</button>
@@ -664,65 +608,60 @@
         </p>
       </div>
       <div class="hero-right">
-        <img src="family.jpeg" alt="The Sutherland family">
+        <!-- ═══════════════════════════════════════════════════
+             TO ADD YOUR FAMILY PHOTO:
+             Replace everything inside .hero-right with:
+             <img src="your-photo.jpg" style="width:100%;height:100%;object-fit:cover">
+             Or for a video:
+             <video src="your-video.mp4" autoplay muted loop style="width:100%;height:100%;object-fit:cover"></video>
+        ═══════════════════════════════════════════════════ -->
+        <div class="hero-photo-placeholder">
+          <div class="photo-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="1.5" y="4" width="17" height="12" rx="1.5" stroke="#c4bfb6" stroke-width="1.3"/>
+              <circle cx="10" cy="10" r="3" stroke="#c4bfb6" stroke-width="1.3"/>
+              <path d="M6.5 4L8 1.5h4L13.5 4" stroke="#c4bfb6" stroke-width="1.3"/>
+            </svg>
+          </div>
+          <div class="photo-hint">Family photo here</div>
+          <div class="photo-hint-small">Replace with your image</div>
+        </div>
       </div>
     </div>
 
     <div class="pub-section">
       <div class="sec-eyebrow">Coming Up</div>
       <div class="sec-title">What's happening soon</div>
-      <div class="carousel-wrap" id="home-carousel">
-        <div class="carousel-track-outer">
-          <div class="carousel-track" id="home-carousel-track">
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">5</div><div class="cal-month">Apr</div></div>
-              <div class="cal-title">Family Visit (Ruth and Tim)</div>
-              <div class="cal-meta">A slice of the UK for Easter Sunday</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">28</div><div class="cal-month">Apr</div></div>
-              <div class="cal-title">Perry's 40th Birthday</div>
-              <div class="cal-meta">What a time to be alive</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">1</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Perry's 40th Birthday Party</div>
-              <div class="cal-meta">Creating memories with the fam...</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">22</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Sutherland UK</div>
-              <div class="cal-meta">A trip back to where it started</div>
-              <div class="cal-tag tag-travel">Travel</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">27</div><div class="cal-month">May</div></div>
-              <div class="cal-title">IBIZA!!!</div>
-              <div class="cal-meta">Adult Play time...</div>
-              <div class="cal-tag tag-travel">Travel</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">30</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Uncle Rowan's Birthday</div>
-              <div class="cal-meta">&nbsp;</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">24</div><div class="cal-month">Jun</div></div>
-              <div class="cal-title">Danielle's Birthday</div>
-              <div class="cal-meta">What a time to be alive...</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
+      <div class="cal-grid">
+        <!-- ═══ ADD / EDIT YOUR FAMILY EVENTS BELOW ═══ -->
+        <div class="cal-card">
+          <div class="cal-date-row">
+            <div class="cal-day">12</div>
+            <div class="cal-month">Apr</div>
           </div>
+          <div class="cal-title">Easter holidays begin</div>
+          <div class="cal-meta">School break · 2 weeks · Al Ain</div>
+          <div class="cal-tag tag-school">School</div>
         </div>
-        <div class="carousel-controls">
-          <div class="carousel-dots" id="home-carousel-dots"></div>
-          <button class="carousel-btn" id="home-prev" onclick="carouselMove('home', -1)" aria-label="Previous">&#8592;</button>
-          <button class="carousel-btn" id="home-next" onclick="carouselMove('home', 1)" aria-label="Next">&#8594;</button>
+        <div class="cal-card">
+          <div class="cal-date-row">
+            <div class="cal-day">18</div>
+            <div class="cal-month">Apr</div>
+          </div>
+          <div class="cal-title">UK trip — family visit</div>
+          <div class="cal-meta">Flying Manchester via Abu Dhabi</div>
+          <div class="cal-tag tag-travel">Travel</div>
         </div>
+        <div class="cal-card">
+          <div class="cal-date-row">
+            <div class="cal-day">26</div>
+            <div class="cal-month">Apr</div>
+          </div>
+          <div class="cal-title">Danielle's birthday</div>
+          <div class="cal-meta">Family dinner · venue TBC</div>
+          <div class="cal-tag tag-family">Family</div>
+        </div>
+        <!-- Add more events by copying a .cal-card block above -->
       </div>
     </div>
 
@@ -731,36 +670,41 @@
       <div class="sec-title">From the family</div>
       <div class="blog-layout">
         <div>
+          <!-- ═══ ADD / EDIT BLOG POSTS BELOW ═══ -->
           <div class="blog-post">
-            <div class="blog-date">3 April 2026</div>
-            <div class="blog-title">It's Good Friday!</div>
+            <div class="blog-date">28 March 2026</div>
+            <div class="blog-title">March flew by — and we finally got to the beach</div>
             <p class="blog-excerpt">
-              We got no bun, No Hardo' (Hard dough) bread and no Fried Fish!!!
-              It's a first... and I need to plan better next year to make sure its the last.
+              After a hectic few weeks it was wonderful to spend the last weekend of the month at the coast.
+              The kids were in the water before we'd even unloaded the car. Pictures in the gallery.
             </p>
           </div>
           <div class="blog-post">
-            <div class="blog-date">31 March 2026</div>
-            <div class="blog-title">March flew by... (Pun intended) We didn't even get to the Beach!</div>
+            <div class="blog-date">14 February 2026</div>
+            <div class="blog-title">Valentine's at the Sofitel — a rare night off for us two</div>
             <p class="blog-excerpt">
-              After a hectic few weeks with everything happening, it was wonderful to spend a few weekends on
-              concrete... Doing shopping! Soft Play and fun at the Sci-Fi Land. Pictures in the gallery.
+              Perry surprised us both with a night at the Sofitel Abu Dhabi. It's become a bit of a tradition.
+              Dinner was extraordinary, the kids were blissfully unaware.
             </p>
           </div>
         </div>
         <div class="blog-sidebar">
           <div class="sidebar-heading">Earlier updates</div>
           <div class="sidebar-item">
-            <div class="sidebar-item-title">Harvey's 10th Birthday</div>
-            <div class="sidebar-item-date">4 February 2026</div>
+            <div class="sidebar-item-title">New year, new chapter — January reflections</div>
+            <div class="sidebar-item-date">5 January 2026</div>
           </div>
           <div class="sidebar-item">
-            <div class="sidebar-item-title">Angela's here for the weekend :)</div>
-            <div class="sidebar-item-date">4 February 2026</div>
+            <div class="sidebar-item-title">Christmas in Al Ain — it was a hot one</div>
+            <div class="sidebar-item-date">27 December 2025</div>
           </div>
           <div class="sidebar-item">
-            <div class="sidebar-item-title">Sutherland & Constantine Yacht day</div>
-            <div class="sidebar-item-date">31 January 2026</div>
+            <div class="sidebar-item-title">November adventures and the big retreat</div>
+            <div class="sidebar-item-date">30 November 2025</div>
+          </div>
+          <div class="sidebar-item">
+            <div class="sidebar-item-title">Half term in Dubai with the kids</div>
+            <div class="sidebar-item-date">22 October 2025</div>
           </div>
         </div>
       </div>
@@ -774,13 +718,12 @@
       <div class="sec-eyebrow">Family Calendar</div>
       <div class="sec-title">April – June 2026</div>
       <div class="cal-grid">
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">5</div><div class="cal-month">Apr</div></div><div class="cal-title">Family Visit (Ruth and Tim)</div><div class="cal-meta">A slice of the UK for Easter Sunday</div><div class="cal-tag tag-family">Family</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">28</div><div class="cal-month">Apr</div></div><div class="cal-title">Perry's 40th Birthday</div><div class="cal-meta">What a time to be alive</div><div class="cal-tag tag-family">Family</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">1</div><div class="cal-month">May</div></div><div class="cal-title">Perry's 40th Birthday Party</div><div class="cal-meta">Creating memories with the fam...</div><div class="cal-tag tag-family">Family</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">22</div><div class="cal-month">May</div></div><div class="cal-title">Sutherland UK</div><div class="cal-meta">A trip back to where it started</div><div class="cal-tag tag-travel">Travel</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">27</div><div class="cal-month">May</div></div><div class="cal-title">IBIZA!!!</div><div class="cal-meta">Adult Play time...</div><div class="cal-tag tag-travel">Travel</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">30</div><div class="cal-month">May</div></div><div class="cal-title">Uncle Rowan's Birthday</div><div class="cal-meta">&nbsp;</div><div class="cal-tag tag-family">Family</div></div>
-        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">24</div><div class="cal-month">Jun</div></div><div class="cal-title">Danielle's Birthday</div><div class="cal-meta">What a time to be alive...</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">12</div><div class="cal-month">Apr</div></div><div class="cal-title">Easter holidays begin</div><div class="cal-meta">2-week school break</div><div class="cal-tag tag-school">School</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">18</div><div class="cal-month">Apr</div></div><div class="cal-title">UK trip — family visit</div><div class="cal-meta">10 days · Manchester</div><div class="cal-tag tag-travel">Travel</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">26</div><div class="cal-month">Apr</div></div><div class="cal-title">Danielle's birthday</div><div class="cal-meta">Family dinner</div><div class="cal-tag tag-family">Family</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">4</div><div class="cal-month">May</div></div><div class="cal-title">School term resumes</div><div class="cal-meta">Year 4 · Al Ain</div><div class="cal-tag tag-school">School</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">20</div><div class="cal-month">May</div></div><div class="cal-title">Sports Day</div><div class="cal-meta">School · parents welcome</div><div class="cal-tag tag-school">School</div></div>
+        <div class="cal-card"><div class="cal-date-row"><div class="cal-day">14</div><div class="cal-month">Jun</div></div><div class="cal-title">Summer holidays begin</div><div class="cal-meta">End of year · 10 weeks</div><div class="cal-tag tag-family">Family</div></div>
       </div>
     </div>
   </div>
@@ -834,26 +777,26 @@
       <div class="blog-layout">
         <div>
           <div class="blog-post">
-            <div class="blog-date">3 April 2026</div>
-            <div class="blog-title">It's Good Friday!</div>
-            <p class="blog-excerpt">We got no bun, No Hardo' (Hard dough) bread and no Fried Fish!!! It's a first... and I need to plan better next year to make sure its the last.</p>
-          </div>
-          <div class="blog-post">
-            <div class="blog-date">31 March 2026</div>
-            <div class="blog-title">March flew by... (Pun intended) We didn't even get to the Beach!</div>
-            <p class="blog-excerpt">After a hectic few weeks with everything happening, it was wonderful to spend a few weekends on concrete... Doing shopping! Soft Play and fun at the Sci-Fi Land. Pictures in the gallery.</p>
+            <div class="blog-date">28 March 2026</div>
+            <div class="blog-title">March flew by — and we finally got to the beach</div>
+            <p class="blog-excerpt">After a hectic few weeks it was wonderful to spend the last weekend of the month at the coast. The kids were in the water before we'd even unloaded the car. Honestly one of the best spontaneous days we've had in a while.</p>
           </div>
           <div class="blog-post">
             <div class="blog-date">14 February 2026</div>
             <div class="blog-title">Valentine's at the Sofitel — a rare night off for us two</div>
             <p class="blog-excerpt">Perry surprised us both with a night at the Sofitel Abu Dhabi. It's become a bit of a tradition now. Dinner was extraordinary, the kids were blissfully unaware and brilliantly looked after.</p>
           </div>
+          <div class="blog-post">
+            <div class="blog-date">5 January 2026</div>
+            <div class="blog-title">New year, new chapter — January reflections</div>
+            <p class="blog-excerpt">A quieter month after the madness of November and December. Time to reset, plan ahead, and enjoy some slower mornings before school picked up pace again.</p>
+          </div>
         </div>
         <div class="blog-sidebar">
           <div class="sidebar-heading">Archive</div>
-          <div class="sidebar-item"><div class="sidebar-item-title">Harvey's 10th Birthday</div><div class="sidebar-item-date">4 February 2026</div></div>
-          <div class="sidebar-item"><div class="sidebar-item-title">Angela's here for the weekend :)</div><div class="sidebar-item-date">4 February 2026</div></div>
-          <div class="sidebar-item"><div class="sidebar-item-title">Sutherland & Constantine Yacht day</div><div class="sidebar-item-date">31 January 2026</div></div>
+          <div class="sidebar-item"><div class="sidebar-item-title">Christmas in Al Ain</div><div class="sidebar-item-date">December 2025</div></div>
+          <div class="sidebar-item"><div class="sidebar-item-title">November adventures</div><div class="sidebar-item-date">November 2025</div></div>
+          <div class="sidebar-item"><div class="sidebar-item-title">Half term in Dubai</div><div class="sidebar-item-date">October 2025</div></div>
         </div>
       </div>
     </div>
@@ -868,10 +811,7 @@
   <div class="admin-shell">
 
     <nav class="admin-nav">
-      <div class="admin-brand">
-        <img src="Sutherland_IV.png" alt="Sutherland IV" style="height:28px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;opacity:0.9;">
-        <span style="vertical-align:middle;">PS / Admin</span>
-      </div>
+      <div class="admin-brand">PS / Admin</div>
       <button class="admin-nav-btn active">Dashboard</button>
       <button class="admin-nav-btn">Finance</button>
       <button class="admin-nav-btn">School</button>
@@ -1123,76 +1063,11 @@
     if (el) el.textContent = str;
   }
 
-  /* ════════════════════════════════════════
-     CAROUSEL
-  ════════════════════════════════════════ */
-  const carousels = {};
-
-  function initCarousel(id) {
-    const track = document.getElementById(id + '-carousel-track');
-    if (!track) return;
-    const cards = track.querySelectorAll('.cal-card');
-    const total = cards.length;
-    const visible = window.innerWidth <= 900 ? 1 : 3;
-    const pages = total - visible + 1;
-    carousels[id] = { current: 0, total, visible, pages };
-
-    // Build dots
-    const dotsEl = document.getElementById(id + '-carousel-dots');
-    if (dotsEl) {
-      dotsEl.innerHTML = '';
-      for (let i = 0; i < pages; i++) {
-        const d = document.createElement('button');
-        d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-        d.onclick = () => carouselGoTo(id, i);
-        dotsEl.appendChild(d);
-      }
-    }
-    updateCarousel(id);
-  }
-
-  function updateCarousel(id) {
-    const c = carousels[id];
-    const track = document.getElementById(id + '-carousel-track');
-    const visible = window.innerWidth <= 900 ? 1 : 3;
-    const gap = 16;
-    const totalGaps = visible - 1;
-    const cardW = (track.parentElement.offsetWidth - gap * totalGaps) / visible;
-    const offset = c.current * (cardW + gap);
-    track.style.transform = `translateX(-${offset}px)`;
-
-    // Update dots
-    const dots = document.querySelectorAll(`#${id}-carousel-dots .carousel-dot`);
-    dots.forEach((d, i) => d.classList.toggle('active', i === c.current));
-
-    // Update buttons
-    const prev = document.getElementById(id + '-prev');
-    const next = document.getElementById(id + '-next');
-    if (prev) prev.disabled = c.current === 0;
-    if (next) next.disabled = c.current >= c.pages - 1;
-  }
-
-  function carouselMove(id, dir) {
-    const c = carousels[id];
-    c.current = Math.max(0, Math.min(c.pages - 1, c.current + dir));
-    updateCarousel(id);
-  }
-
-  function carouselGoTo(id, idx) {
-    carousels[id].current = idx;
-    updateCarousel(id);
-  }
-
-  // Init on load + resize
+  /* Focus password field on load */
   window.addEventListener('load', () => {
-    initCarousel('home');
-    setAdminDate();
     const pw = document.getElementById('gate-pw');
     if (pw) pw.focus();
   });
-  window.addEventListener('resize', () => { initCarousel('home'); });
-
-
 </script>
 </body>
 </html>

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sutherland Finance Dashboard — Oct 2025 – Mar 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --surface: #12161f;
+    --surface2: #1a1f2e;
+    --border: #1e2535;
+    --border2: #2a3348;
+    --accent: #e8c547;
+    --accent2: #4fc3f7;
+    --accent3: #f87171;
+    --accent4: #6ee7b7;
+    --accent5: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --bank: #4fc3f7;
+    --tp: #a78bfa;
+    --c365: #f97316;
+    --in: #6ee7b7;
+    --out: #f87171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,14,20,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex; align-items: center; gap: 4px;
+    height: 52px;
+  }
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 800;
+    color: var(--accent);
+    margin-right: 24px;
+    letter-spacing: -0.02em;
+  }
+  .nav-link {
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 11px; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.08em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.15s; border: none; background: none;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--text); background: var(--surface2); }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* HEADERS */
+  .page-header { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+  }
+  .page-header h1 span { color: var(--accent); }
+  .page-header p { color: var(--muted); font-size: 12px; margin-top: 8px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .section { margin-bottom: 52px; animation: fadeUp 0.5s ease both; }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* GRIDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .kpi-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media(max-width:900px) {
+    .kpi-grid { grid-template-columns: repeat(2,1fr); }
+    .kpi-grid-3 { grid-template-columns: repeat(2,1fr); }
+    .kpi-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; position: relative; overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .card-accent-line { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--line-color, var(--accent)); }
+  .card-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .card-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .card-sub { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; gap: 16px; }
+  .sub-item .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .sub-item .val { font-size: 12px; font-weight: 500; margin-top: 1px; }
+
+  .in { color: var(--in); }
+  .out { color: var(--out); }
+  .warn { color: var(--accent); }
+  .muted { color: var(--muted); }
+
+  /* MONTH SELECTOR */
+  .month-selector {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .month-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: none; color: var(--muted); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.08em; transition: all 0.15s;
+  }
+  .month-btn:hover { border-color: var(--border2); color: var(--text); }
+  .month-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(232,197,71,0.08); }
+
+  /* MONTHLY SUMMARY TABLE */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th {
+    text-align: right; padding: 8px 12px; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--border); font-weight: 500;
+  }
+  .data-table th:first-child { text-align: left; }
+  .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: right; font-size: 12px; }
+  .data-table td:first-child { text-align: left; color: var(--muted2); }
+  .data-table tr:last-child td { border-bottom: none; font-weight: 600; color: var(--text); }
+  .data-table .total-row td { background: var(--surface2); font-weight: 700; }
+  .data-table .category-header td { color: var(--accent); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 14px 12px 6px; background: none; border-bottom: none; }
+
+  /* BARS */
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .bar-label { font-size: 11px; width: 160px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 100px; background: var(--bar-color, var(--accent)); animation: growBar 1s cubic-bezier(0.4,0,0.2,1) both; }
+  @keyframes growBar { from { width: 0 !important; } }
+  .bar-amount { font-size: 11px; width: 90px; text-align: right; color: var(--muted2); flex-shrink: 0; }
+
+  /* TREND CHART */
+  .chart-area { position: relative; height: 180px; margin: 16px 0 8px; }
+  .chart-svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* DEBT CARDS */
+  .debt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media(max-width:700px) { .debt-grid { grid-template-columns: 1fr; } }
+  .debt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .debt-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .debt-balance { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--out); margin-bottom: 16px; }
+  .debt-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+  .debt-row:last-child { border-bottom: none; }
+  .debt-row .k { color: var(--muted); }
+  .progress-bar { margin-top: 12px; }
+  .progress-track { height: 4px; background: var(--border); border-radius: 100px; margin-top: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; background: var(--progress-color, var(--accent)); animation: growBar 1.2s ease both; }
+
+  /* SAVINGS CARDS */
+  .savings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media(max-width:900px) { .savings-grid { grid-template-columns: repeat(2,1fr); } }
+  .saving-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .saving-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+  .saving-balance { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; }
+  .saving-target { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* TRANSACTIONS */
+  .txn-list { }
+  .txn-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .txn-item:last-child { border-bottom: none; }
+  .txn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .txn-info { flex: 1; min-width: 0; }
+  .txn-name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .txn-meta { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .txn-amount { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+
+  /* ALERTS */
+  .alert { border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; gap: 12px; border-left: 3px solid var(--alert-color); background: color-mix(in srgb, var(--alert-color) 6%, var(--surface)); }
+  .alert-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .alert-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .alert-body { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* MONTH DETAIL PANEL */
+  .month-detail { display: none; }
+  .month-detail.active { display: block; animation: fadeUp 0.3s ease both; }
+
+  /* INCOME PANEL */
+  .income-source { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .income-source:last-child { border-bottom: none; }
+  .income-badge { font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 500; }
+  .badge-aed { background: rgba(79,195,247,0.15); color: var(--bank); border: 1px solid rgba(79,195,247,0.3); }
+  .badge-gbp { background: rgba(110,231,183,0.15); color: var(--in); border: 1px solid rgba(110,231,183,0.3); }
+
+  /* TAG */
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 8px; border-radius: 100px; font-weight: 500; border: 1px solid; margin-left: 6px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* FOOTER */
+  .footer { border-top: 1px solid var(--border); padding-top: 20px; color: var(--muted); font-size: 10px; display: flex; justify-content: space-between; letter-spacing: 0.08em; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">PS / FINANCE</div>
+  <button class="nav-link active" onclick="showSection('overview')">Overview</button>
+  <button class="nav-link" onclick="showSection('monthly')">Monthly</button>
+  <button class="nav-link" onclick="showSection('spending')">Spending</button>
+  <button class="nav-link" onclick="showSection('debts')">Debts</button>
+  <button class="nav-link" onclick="showSection('savings')">Savings</button>
+  <button class="nav-link" onclick="showSection('alerts')">⚠ Alerts</button>
+</nav>
+
+<div class="wrapper">
+
+<!-- ═══════════════════════════════════ OVERVIEW ═══════════════════════════════════ -->
+<div id="section-overview">
+  <div class="page-header">
+    <h1>PERRY <span>SUTHERLAND</span></h1>
+    <p>Financial Dashboard &nbsp;·&nbsp; Oct 2025 – Mar 2026 &nbsp;·&nbsp; ADCB &nbsp;·&nbsp; AED</p>
+  </div>
+
+  <!-- 6-MONTH KPIs -->
+  <div class="section" style="animation-delay:0.05s">
+    <div class="section-label">6-Month Totals (Oct 2025 – Mar 2026)</div>
+    <div class="kpi-grid">
+      <div class="card" style="--line-color: var(--in)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Total Salary Received</div>
+        <div class="card-value in">237,107</div>
+        <div class="card-sub">
+          <div class="sub-item"><div class="lbl">AED / month avg</div><div class="val">39,518</div></div>
+          <div class="sub-item"><div class="lbl">Months</div><div class="val">6</div></div>
+        </div>
+      </div>
+      <div class="card" style="--line-color: var(--in)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Total Credits (all sources)</div>
+        <div class="card-value in">283,207</div>
+        <div class="card-sub">
+          <div class="sub-item"><div class="lbl">Avg/month</div><div class="val">47,201</div></div>
+          <div class="sub-item"><div class="lbl">incl. GBP transfers</div><div class="val in">+16,978</div></div>
+        </div>
+      </div>
+      <div class="card" style="--line-color: var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Total Debts Serviced</div>
+        <div class="card-value out">102,558</div>
+        <div class="card-sub">
+          <div class="sub-item"><div class="lbl">Loan EMI total</div><div class="val out">33,429</div></div>
+          <div class="sub-item"><div class="lbl">Car finance</div><div class="val out">6,500</div></div>
+        </div>
+      </div>
+      <div class="card" style="--line-color: var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">GBP Transferred to UK</div>
+        <div class="card-value out">71,597</div>
+        <div class="card-sub">
+          <div class="sub-item"><div class="lbl">≈ GBP equiv.</div><div class="val out">~15,035</div></div>
+          <div class="sub-item"><div class="lbl">6 transfers</div><div class="val">see monthly</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREND CHART -->
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-label">Monthly Income vs Outgoings Trend</div>
+    <div class="card">
+      <div class="chart-area">
+        <svg class="chart-svg" viewBox="0 0 900 180" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="gIn" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="gOut" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f87171" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#f87171" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid lines -->
+          <line x1="0" y1="20" x2="900" y2="20" stroke="#1e2535" stroke-width="1"/>
+          <line x1="0" y1="70" x2="900" y2="70" stroke="#1e2535" stroke-width="1"/>
+          <line x1="0" y1="120" x2="900" y2="120" stroke="#1e2535" stroke-width="1"/>
+          <line x1="0" y1="160" x2="900" y2="160" stroke="#1e2535" stroke-width="1"/>
+          <!-- Y labels -->
+          <text x="0" y="18" fill="#6b7280" font-size="18" font-family="JetBrains Mono">80k</text>
+          <text x="0" y="68" fill="#6b7280" font-size="18" font-family="JetBrains Mono">60k</text>
+          <text x="0" y="118" fill="#6b7280" font-size="18" font-family="JetBrains Mono">40k</text>
+          <text x="0" y="158" fill="#6b7280" font-size="18" font-family="JetBrains Mono">20k</text>
+          <!-- Data: months at x=60,210,360,510,660,810 ; scale: 0=160 80k=20 so 1k=1.75px -->
+          <!-- Income points: Oct=45k→82.5, Nov=47k→78.5, Dec=41k→89.75, Jan=55k→61.25, Feb=49k→73.75, Mar=45.5k→81.25 -->
+          <path d="M60,82.5 L210,78.5 L360,89.75 L510,61.25 L660,73.75 L810,81.25" fill="url(#gIn)" stroke="none" opacity="0.5"/>
+          <path d="M60,82.5 L210,78.5 L360,89.75 L510,61.25 L660,73.75 L810,81.25 L810,160 L60,160 Z" fill="url(#gIn)" stroke="none"/>
+          <path d="M60,82.5 L210,78.5 L360,89.75 L510,61.25 L660,73.75 L810,81.25" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Outgoing estimate: Oct=36k→97, Nov=117k(huge)=negative capped=20, Dec=18k→125, Jan=22k→115.5, Feb=27k→112.75, Mar=44k→88 -->
+          <path d="M60,97 L210,25 L360,125 L510,115.5 L660,112.75 L810,88" fill="none" stroke="#f87171" stroke-width="2.5" stroke-dasharray="6,3" stroke-linejoin="round"/>
+          <!-- Dots - Income -->
+          <circle cx="60" cy="82.5" r="4" fill="#6ee7b7"/>
+          <circle cx="210" cy="78.5" r="4" fill="#6ee7b7"/>
+          <circle cx="360" cy="89.75" r="4" fill="#6ee7b7"/>
+          <circle cx="510" cy="61.25" r="4" fill="#6ee7b7"/>
+          <circle cx="660" cy="73.75" r="4" fill="#6ee7b7"/>
+          <circle cx="810" cy="81.25" r="4" fill="#6ee7b7"/>
+          <!-- Dots - Outgoing -->
+          <circle cx="60" cy="97" r="4" fill="#f87171"/>
+          <circle cx="210" cy="25" r="4" fill="#f87171"/>
+          <circle cx="360" cy="125" r="4" fill="#f87171"/>
+          <circle cx="510" cy="115.5" r="4" fill="#f87171"/>
+          <circle cx="660" cy="112.75" r="4" fill="#f87171"/>
+          <circle cx="810" cy="88" r="4" fill="#f87171"/>
+          <!-- Month labels -->
+          <text x="60" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Oct</text>
+          <text x="210" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Nov</text>
+          <text x="360" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Dec</text>
+          <text x="510" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Jan</text>
+          <text x="660" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Feb</text>
+          <text x="810" y="175" fill="#6b7280" font-size="18" text-anchor="middle" font-family="JetBrains Mono">Mar</text>
+          <!-- Legend -->
+          <rect x="720" y="5" width="12" height="3" rx="1.5" fill="#6ee7b7"/>
+          <text x="737" y="11" fill="#9ca3af" font-size="16" font-family="JetBrains Mono">Income</text>
+          <line x1="720" y1="24" x2="732" y2="24" stroke="#f87171" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="737" y="28" fill="#9ca3af" font-size="16" font-family="JetBrains Mono">Outgoings</text>
+        </svg>
+      </div>
+      <div style="font-size:10px;color:var(--muted);text-align:center">Nov outgoings spike driven by CONSILIARI PARTNERS transfer (241,000 AED) + MK Motors (27,000 AED)</div>
+    </div>
+  </div>
+
+  <!-- MONTHLY SUMMARY TABLE -->
+  <div class="section" style="animation-delay:0.15s">
+    <div class="section-label">Month-by-Month Summary (AED)</div>
+    <div class="card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Oct '25</th><th>Nov '25</th><th>Dec '25</th>
+            <th>Jan '26</th><th>Feb '26</th><th>Mar '26</th>
+            <th>6M Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="category-header"><td colspan="8">INCOME</td></tr>
+          <tr><td>Salary (AED)</td><td class="in">37,107</td><td class="in">40,000</td><td class="in">40,000</td><td class="in">40,000</td><td class="in">40,000</td><td class="in">40,000</td><td class="in">237,107</td></tr>
+          <tr><td>GBP / Barclays In (AED equiv)</td><td class="in">1,849</td><td class="in">0</td><td class="in">0</td><td class="in">3,841</td><td class="in">1,000</td><td class="in">10,288</td><td class="in">16,978</td></tr>
+          <tr><td>Danielle Credits</td><td class="in">6,140</td><td class="in">3,220</td><td class="in">100</td><td class="in">100</td><td class="in">4,300</td><td class="in">5,000</td><td class="in">18,860</td></tr>
+          <tr><td>Insurance / Other Credits</td><td class="in">0</td><td class="in">3,800</td><td class="in">1,095</td><td class="in">4,766</td><td class="in">4,730</td><td class="in">500</td><td class="in">14,891</td></tr>
+          <tr class="total-row"><td>TOTAL IN</td><td class="in">45,096</td><td class="in">47,020</td><td class="in">41,195</td><td class="in">48,707</td><td class="in">50,030</td><td class="in">55,788</td><td class="in">287,836</td></tr>
+
+          <tr class="category-header"><td colspan="8">OUTGOINGS</td></tr>
+          <tr><td>Loan EMI</td><td class="out">0</td><td class="out">0</td><td class="out">9,519</td><td class="out">0</td><td class="out">11,955</td><td class="out">11,955</td><td class="out">33,429</td></tr>
+          <tr><td>Car Finance</td><td class="out">0</td><td class="out">0</td><td class="out">0</td><td class="out">2,167</td><td class="out">2,167</td><td class="out">2,167</td><td class="out">6,501</td></tr>
+          <tr><td>Credit Card Payments</td><td class="out">15,355</td><td class="out">57,805</td><td class="out">5,805</td><td class="out">12,000</td><td class="out">9,884</td><td class="out">16,000</td><td class="out">116,849</td></tr>
+          <tr><td>ATM Withdrawals</td><td class="out">4,600</td><td class="out">12,000</td><td class="out">3,400</td><td class="out">3,400</td><td class="out">1,200</td><td class="out">7,900</td><td class="out">32,500</td></tr>
+          <tr><td>GBP Transfers Out</td><td class="out">12,605</td><td class="out">42,421</td><td class="out">0</td><td class="out">10,545</td><td class="out">0</td><td class="out">6,229</td><td class="out">71,800</td></tr>
+          <tr><td>Family / Staff Transfers</td><td class="out">3,746</td><td class="out">5,128</td><td class="out">250</td><td class="out">8,122</td><td class="out">1,585</td><td class="out">5,796</td><td class="out">24,627</td></tr>
+          <tr><td>Savings (Systematic)</td><td class="out">0</td><td class="out">0</td><td class="out">0</td><td class="out">1,000</td><td class="out">1,000</td><td class="out">1,000</td><td class="out">3,000</td></tr>
+          <tr class="category-header"><td colspan="8">SPECIAL / ONE-OFF</td></tr>
+          <tr><td>CONSILIARI Transfer (Nov)</td><td>—</td><td class="out">241,000</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="out">241,000</td></tr>
+          <tr><td>MK Motors (Nov)</td><td>—</td><td class="out">27,000</td><td>—</td><td>—</td><td>—</td><td>—</td><td class="out">27,000</td></tr>
+          <tr><td>Loan Settlement (Jan)</td><td>—</td><td>—</td><td>—</td><td class="out">398,655</td><td>—</td><td>—</td><td class="out">398,655</td></tr>
+          <tr><td>New Loan Disbursement (Jan)</td><td>—</td><td>—</td><td>—</td><td class="in">502,033</td><td>—</td><td>—</td><td class="in">502,033</td></tr>
+          <tr><td>GBP10k Transfer (Jan)</td><td>—</td><td>—</td><td>—</td><td class="out">51,134</td><td>—</td><td>—</td><td class="out">51,134</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MONTHLY DETAIL ═══════════════════════════════════ -->
+<div id="section-monthly" style="display:none">
+  <div class="page-header">
+    <h1>MONTHLY <span>DETAIL</span></h1>
+    <p>Select a month to see full breakdown</p>
+  </div>
+
+  <div class="month-selector">
+    <button class="month-btn active" onclick="showMonth('oct25', this)">Oct 2025</button>
+    <button class="month-btn" onclick="showMonth('nov25', this)">Nov 2025</button>
+    <button class="month-btn" onclick="showMonth('dec25', this)">Dec 2025</button>
+    <button class="month-btn" onclick="showMonth('jan26', this)">Jan 2026</button>
+    <button class="month-btn" onclick="showMonth('feb26', this)">Feb 2026</button>
+    <button class="month-btn active-month" onclick="showMonth('mar26', this)">Mar 2026 ★</button>
+  </div>
+
+  <!-- OCT 2025 -->
+  <div id="month-oct25" class="month-detail active">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In</div><div class="card-value in">45,096</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out</div><div class="card-value out">36,306</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Salary</div><div class="card-value warn">37,107</div><div class="card-sub"><div class="sub-item"><div class="lbl">Date</div><div class="val">28 Oct</div></div></div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Net Position</div><div class="card-value in">+8,790</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Key Outgoings</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">GBP 2,500 → UK (Perry)</div><div class="txn-meta">28 Oct · Bank transfer</div></div><div class="txn-amount out">12,605</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Credit Card Payments</div><div class="txn-meta">Oct · TP card various</div></div><div class="txn-amount out">15,355</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">ATM Withdrawals</div><div class="txn-meta">3 withdrawals</div></div><div class="txn-amount out">4,600</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Family Transfers</div><div class="txn-meta">Nauman, Danielle, misc</div></div><div class="txn-amount out">3,746</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Cleveland Clinic</div><div class="txn-meta">28 Oct · Medical</div></div><div class="txn-amount out">2,750</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Notable Transactions</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Salary</div><div class="txn-meta">28 Oct</div></div><div class="txn-amount in">37,107</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Danielle &amp; Various Credits</div><div class="txn-meta">Multiple dates</div></div><div class="txn-amount in">6,140</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Citi/Monzo GBP In</div><div class="txn-meta">7, 15, 20 Oct</div></div><div class="txn-amount in">1,849</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Wrap Interiors (Home)</div><div class="txn-meta">28 Oct</div></div><div class="txn-amount out">3,663</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Tamara BNPL payment</div><div class="txn-meta">29 Oct</div></div><div class="txn-amount out">480</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOV 2025 -->
+  <div id="month-nov25" class="month-detail">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In</div><div class="card-value in">47,020</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out (excl. CONSILIARI)</div><div class="card-value out">117,354</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Salary</div><div class="card-value warn">40,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">Date</div><div class="val">26 Nov</div></div></div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">CONSILIARI Transfer</div><div class="card-value out">241,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">Business/investment</div><div class="val">17 Nov</div></div></div></div>
+    </div>
+    <div class="alert" style="--alert-color:var(--out); margin-bottom:20px">
+      <div class="alert-icon">🚨</div>
+      <div><div class="alert-title">November was an exceptional month</div><div class="alert-body">Total outflows of ~358,000 AED including: CONSILIARI PARTNERS (241,000) · MK Motors x3 (27,000) · BRIDGE RETREATS deposit (18,750 on TP card) · GBP transfers to UK (42,421) · Card payments (57,805). New 400,000 AED loan was drawn in following month.</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Major Outflows</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">CONSILIARI PARTNERS FZE</div><div class="txn-meta">17 Nov · Business investment</div></div><div class="txn-amount out">241,000</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">MK Motors (3 payments)</div><div class="txn-meta">17–19 Nov · 9,000 × 3</div></div><div class="txn-amount out">27,000</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">GBP Transfers to UK</div><div class="txn-meta">GBP 1,500 + 2,000 + 2,000 + 3,000</div></div><div class="txn-amount out">42,421</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Card Payments (TP card)</div><div class="txn-meta">10,000 + 10,000 + 37,805</div></div><div class="txn-amount out">57,805</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">ATM Withdrawals</div><div class="txn-meta">5,000 + 3,000 + 4,000</div></div><div class="txn-amount out">12,000</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Also Notable</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Amazon (large order)</div><div class="txn-meta">19 Nov · 3,835 + 921</div></div><div class="txn-amount out">4,756</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">BRIDGE RET (on TP card)</div><div class="txn-meta">18 Nov · Holiday/retreat deposit</div></div><div class="txn-amount out">18,750</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">SP WWW SOL (UK clothing)</div><div class="txn-meta">17 Nov</div></div><div class="txn-amount out">749</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Salary</div><div class="txn-meta">26 Nov</div></div><div class="txn-amount in">40,000</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Daman Insurance</div><div class="txn-meta">19 Nov</div></div><div class="txn-amount in">3,800</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEC 2025 -->
+  <div id="month-dec25" class="month-detail">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In</div><div class="card-value in">41,195</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out</div><div class="card-value out">18,974</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Loan EMI (old)</div><div class="card-value out">9,519</div><div class="card-sub"><div class="sub-item"><div class="lbl">Last EMI before refi</div><div class="val">26 Dec</div></div></div></div>
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Net Position</div><div class="card-value in">+22,221</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Key Outgoings</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Old Loan EMI</div><div class="txn-meta">26 Dec · Final before refinance</div></div><div class="txn-amount out">9,519</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Card Payments</div><div class="txn-meta">Dec · Multiple</div></div><div class="txn-amount out">5,805</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">ATM Withdrawals</div><div class="txn-meta">3 withdrawals</div></div><div class="txn-amount out">3,400</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">25,000 TRF → self (to PJNS)</div><div class="txn-meta">27 Dec</div></div><div class="txn-amount out">25,000</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Etihad Flights</div><div class="txn-meta">31 Dec · 2,985 × 2</div></div><div class="txn-amount out">5,970</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Festive Spending (TP Card)</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Beach Rotana Hotel</div><div class="txn-meta">12 Dec · 3,517</div></div><div class="txn-amount out">3,517</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Louis Vuitton</div><div class="txn-meta">6 Dec</div></div><div class="txn-amount out">1,840</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Ventura Entertainment</div><div class="txn-meta">13 Dec</div></div><div class="txn-amount out">1,900</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Vogue Fitness Gym</div><div class="txn-meta">2 Dec</div></div><div class="txn-amount out">1,500</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Zara (multiple)</div><div class="txn-meta">2 Dec · 956 + 369 + 228</div></div><div class="txn-amount out">1,553</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAN 2026 -->
+  <div id="month-jan26" class="month-detail">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In (incl. new loan)</div><div class="card-value in">555,740</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out (incl. settlement)</div><div class="card-value out">498,613</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Loan Refinanced</div><div class="card-value warn">13 Jan</div><div class="card-sub"><div class="sub-item"><div class="lbl">Old settled</div><div class="val out">398,655</div></div><div class="sub-item"><div class="lbl">New drawn</div><div class="val in">502,033</div></div></div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">New Monthly EMI</div><div class="card-value out">11,955</div><div class="card-sub"><div class="sub-item"><div class="lbl">Previous EMI</div><div class="val">9,519</div></div></div></div>
+    </div>
+    <div class="alert" style="--alert-color:var(--accent); margin-bottom:20px">
+      <div class="alert-icon">ℹ️</div>
+      <div><div class="alert-title">Loan refinance month — figures distorted</div><div class="alert-body">13 Jan: Old loan (398,654.96 AED) fully settled via debit, new loan (502,032.76 AED) disbursed via credit on same day. EMI increases from 9,519 to 11,955 AED/month. Additionally GBP 10,000 transferred to UK (51,134 AED inc. fees) plus GBP 2,000 transfer (10,440 AED).</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Top Spends (excl. loan refi)</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">GBP 10k + 2k to UK</div><div class="txn-meta">13 + 29 Jan</div></div><div class="txn-amount out">61,574</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">LE MERIDIE Dubai (hotel)</div><div class="txn-meta">17–18 Jan · Multiple rooms</div></div><div class="txn-amount out">7,366</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Westin Dubai</div><div class="txn-meta">17–19 Jan</div></div><div class="txn-amount out">1,154</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">ALO Yoga Dubai</div><div class="txn-meta">15 Jan</div></div><div class="txn-amount out">1,840</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">HTAEGENL (Las Vegas – ??)</div><div class="txn-meta">21 Jan · Foreign txn</div></div><div class="txn-amount out">1,844</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Family Transfers Jan</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Bilal Pervez</div><div class="txn-meta">3,100 + 1,500 + 800</div></div><div class="txn-amount out">5,400</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Himani Agrawal</div><div class="txn-meta">525</div></div><div class="txn-amount out">525</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Adil Khan</div><div class="txn-meta">300 + 150</div></div><div class="txn-amount out">450</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Nauman Fayaz</div><div class="txn-meta">1,000 + 350</div></div><div class="txn-amount out">1,350</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Konstantin Voronin</div><div class="txn-meta">800</div></div><div class="txn-amount out">800</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEB 2026 -->
+  <div id="month-feb26" class="month-detail">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In</div><div class="card-value in">50,030</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out</div><div class="card-value out">27,791</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Loan EMI</div><div class="card-value out">11,955</div><div class="card-sub"><div class="sub-item"><div class="lbl">+ Car Finance</div><div class="val out">2,167</div></div></div></div>
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Net Position</div><div class="card-value in">+22,239</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Notable Spends</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Sofitel Abu Dhabi</div><div class="txn-meta">14 Feb · Valentine's / stay</div></div><div class="txn-amount out">12,440</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Tootfunyac (kids entertainment)</div><div class="txn-meta">15 Feb</div></div><div class="txn-amount out">1,153</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Adrenark (fitness/sport)</div><div class="txn-meta">7 Feb · 546+205+758</div></div><div class="txn-amount out">1,509</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Rosewood Hotel</div><div class="txn-meta">7 Feb · 2,174 + 90</div></div><div class="txn-amount out">2,264</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Table Otto Al Ain (dining)</div><div class="txn-meta">1 Feb</div></div><div class="txn-amount out">705</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Income Detail</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Salary</div><div class="txn-meta">27 Feb</div></div><div class="txn-amount in">40,000</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Danielle credits</div><div class="txn-meta">17 + 24 Feb</div></div><div class="txn-amount in">4,300</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Daman insurance reimbursement</div><div class="txn-meta">20 Feb</div></div><div class="txn-amount in">2,980</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Tabby refund</div><div class="txn-meta">31 Jan / Feb</div></div><div class="txn-amount in">490</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--in)"></div><div class="txn-info"><div class="txn-name">Self transfer in</div><div class="txn-meta">14 Feb</div></div><div class="txn-amount in">1,000</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAR 2026 -->
+  <div id="month-mar26" class="month-detail">
+    <div class="kpi-grid" style="margin-bottom:20px">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Total In</div><div class="card-value in">55,788</div></div>
+      <div class="card" style="--line-color:var(--out)"><div class="card-accent-line"></div><div class="card-label">Total Out</div><div class="card-value out">51,047</div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Finance Charges (cards)</div><div class="card-value out">3,037</div><div class="card-sub"><div class="sub-item"><div class="lbl">TP</div><div class="val out">1,662</div></div><div class="sub-item"><div class="lbl">365</div><div class="val out">1,087</div></div></div></div>
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Net Position</div><div class="card-value in">+4,741</div></div>
+    </div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Largest Transactions</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--tp)"></div><div class="txn-info"><div class="txn-name">Hamad &amp; (supermarket)</div><div class="txn-meta">29 Mar · Bank</div></div><div class="txn-amount out">1,716</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--c365)"></div><div class="txn-info"><div class="txn-name">Apple The Galleria</div><div class="txn-meta">28 Mar · 365 card</div></div><div class="txn-amount out">2,776</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--tp)"></div><div class="txn-info"><div class="txn-name">Rosewood Hotel Abu Dhabi</div><div class="txn-meta">28 Mar · TP card</div></div><div class="txn-amount out">917</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--tp)"></div><div class="txn-info"><div class="txn-name">Victoria's Secret</div><div class="txn-meta">28 Mar · TP card</div></div><div class="txn-amount out">901</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--bank)"></div><div class="txn-info"><div class="txn-name">Zara Abu Dhabi</div><div class="txn-meta">28 Mar · Bank</div></div><div class="txn-amount out">1,193</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Subscriptions Active</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent5)"></div><div class="txn-info"><div class="txn-name">Claude.ai + Anthropic API</div><div class="txn-meta">365 card · USD 21 + 31.5</div></div><div class="txn-amount out">201</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent5)"></div><div class="txn-info"><div class="txn-name">Genspark.ai</div><div class="txn-meta">365 card · USD 26.24</div></div><div class="txn-amount out">100</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent5)"></div><div class="txn-info"><div class="txn-name">BetterMe</div><div class="txn-meta">365 card · USD 38.95</div></div><div class="txn-amount out">149</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent5)"></div><div class="txn-info"><div class="txn-name">Virgin Media + Disney+</div><div class="txn-meta">TP + 365 · GBP 150 + 22 + Disney</div></div><div class="txn-amount out">933</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent5)"></div><div class="txn-info"><div class="txn-name">InteleTravel / PlanNet</div><div class="txn-meta">365 card</div></div><div class="txn-amount out">241</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ SPENDING ═══════════════════════════════════ -->
+<div id="section-spending" style="display:none">
+  <div class="page-header">
+    <h1>SPENDING <span>BREAKDOWN</span></h1>
+    <p>Category analysis · All 6 months combined</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.05s">
+    <div class="section-label">Card Spending by Category (Est. 6-month total)</div>
+    <div class="card">
+      <div class="bar-row"><div class="bar-label">Groceries / Supermarket</div><div class="bar-track"><div class="bar-fill" style="width:75%;--bar-color:#4fc3f7"></div></div><div class="bar-amount in">~32,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Restaurants / Dining</div><div class="bar-track"><div class="bar-fill" style="width:62%;--bar-color:#6ee7b7"></div></div><div class="bar-amount">~26,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Fashion / Retail</div><div class="bar-track"><div class="bar-fill" style="width:58%;--bar-color:#a78bfa"></div></div><div class="bar-amount">~24,500 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Food Delivery (Talabat/Noon)</div><div class="bar-track"><div class="bar-fill" style="width:45%;--bar-color:#f97316"></div></div><div class="bar-amount">~18,500 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Hotels / Staycations</div><div class="bar-track"><div class="bar-fill" style="width:55%;--bar-color:#e8c547"></div></div><div class="bar-amount">~23,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">ADNOC / Fuel</div><div class="bar-track"><div class="bar-fill" style="width:30%;--bar-color:#6ee7b7"></div></div><div class="bar-amount">~11,500 AED</div></div>
+      <div class="bar-row"><div class="bar-label">BNPL (Tabby / Tamara)</div><div class="bar-track"><div class="bar-fill" style="width:28%;--bar-color:#f87171"></div></div><div class="bar-amount">~11,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Finance Charges (cards)</div><div class="bar-track"><div class="bar-fill" style="width:22%;--bar-color:#f87171"></div></div><div class="bar-amount out">~9,900 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Subscriptions</div><div class="bar-track"><div class="bar-fill" style="width:14%;--bar-color:#94a3b8"></div></div><div class="bar-amount">~5,800 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Children / Education / Toys</div><div class="bar-track"><div class="bar-fill" style="width:12%;--bar-color:#f97316"></div></div><div class="bar-amount">~4,800 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Health / Pharmacy</div><div class="bar-track"><div class="bar-fill" style="width:10%;--bar-color:#6ee7b7"></div></div><div class="bar-amount">~4,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Beauty / Grooming</div><div class="bar-track"><div class="bar-fill" style="width:8%;--bar-color:#a78bfa"></div></div><div class="bar-amount">~3,200 AED</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-label">Recurring Monthly Subscriptions</div>
+    <div class="card">
+      <table class="data-table">
+        <thead><tr><th>Service</th><th>Card</th><th>Currency</th><th>AED Equiv</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Claude.ai Pro</td><td>365</td><td>USD 21</td><td class="out">80</td><td><span style="color:var(--accent5)">AI Tools</span></td></tr>
+          <tr><td>Anthropic API</td><td>365</td><td>USD ~31</td><td class="out">~121</td><td><span style="color:var(--accent5)">AI Tools</span></td></tr>
+          <tr><td>Genspark.ai</td><td>365</td><td>USD 26.24</td><td class="out">100</td><td><span style="color:var(--accent5)">AI Tools</span></td></tr>
+          <tr><td>BetterMe</td><td>365</td><td>USD 38.95</td><td class="out">149</td><td>Fitness</td></tr>
+          <tr><td>Disney Plus</td><td>365</td><td>GBP ~10</td><td class="out">50</td><td>Entertainment</td></tr>
+          <tr><td>Virgin Media</td><td>TP + 365</td><td>GBP varies</td><td class="out">~770</td><td>UK Broadband</td></tr>
+          <tr><td>MYIQ</td><td>Bank</td><td>USD 29.99</td><td class="out">114</td><td>Finance Tool</td></tr>
+          <tr><td>InteleTravel</td><td>365</td><td>GBP 32</td><td class="out">165</td><td>Travel Agent</td></tr>
+          <tr><td>PlanNet Marketing</td><td>365</td><td>USD 19.95</td><td class="out">76</td><td>MLM</td></tr>
+          <tr><td>e& Digital</td><td>Bank</td><td>AED</td><td class="out">~440</td><td>Telecom</td></tr>
+          <tr class="total-row"><td>Est. Monthly Total</td><td></td><td></td><td class="out">~2,065</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.15s">
+    <div class="section-label">Top Merchants (6-month cumulative)</div>
+    <div class="kpi-grid-2">
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Highest Spend Merchants</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent)"></div><div class="txn-info"><div class="txn-name">Al Fair Al Ain</div><div class="txn-meta">Grocery · 30+ transactions</div></div><div class="txn-amount out">~12,000+</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent)"></div><div class="txn-info"><div class="txn-name">Talabat (all)</div><div class="txn-meta">Food delivery · 50+ txns</div></div><div class="txn-amount out">~9,500+</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent)"></div><div class="txn-info"><div class="txn-name">Amazon.ae</div><div class="txn-meta">Online · 20+ transactions</div></div><div class="txn-amount out">~8,000+</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent)"></div><div class="txn-info"><div class="txn-name">ADNOC (all stations)</div><div class="txn-meta">Fuel · 25+ transactions</div></div><div class="txn-amount out">~7,500+</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--accent)"></div><div class="txn-info"><div class="txn-name">Scalini (restaurant)</div><div class="txn-meta">Dining · 8+ visits</div></div><div class="txn-amount out">~2,200+</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:12px">Notable One-Off / Luxury</div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">BRIDGE RETREATS</div><div class="txn-meta">Nov+Dec TP card · Holiday</div></div><div class="txn-amount out">18,750</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Louis Vuitton</div><div class="txn-meta">Dec TP card</div></div><div class="txn-amount out">1,840</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Majestic Optics</div><div class="txn-meta">Nov 365 card</div></div><div class="txn-amount out">4,480</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">Panmeas Jewellery</div><div class="txn-meta">Dec 365 card</div></div><div class="txn-amount out">1,695</div></div>
+          <div class="txn-item"><div class="txn-dot" style="background:var(--out)"></div><div class="txn-info"><div class="txn-name">HM Passport Office</div><div class="txn-meta">Dec TP card · GBP 99.5</div></div><div class="txn-amount out">509</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DEBTS ═══════════════════════════════════ -->
+<div id="section-debts" style="display:none">
+  <div class="page-header">
+    <h1>DEBT <span>TRACKER</span></h1>
+    <p>All debts · AED · As of Apr 2026</p>
+  </div>
+
+  <!-- DEBT SUMMARY KPIs -->
+  <div class="section" style="animation-delay:0.05s">
+    <div class="kpi-grid">
+      <div class="card" style="--line-color:var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Total Debt Outstanding</div>
+        <div class="card-value out">728,812</div>
+        <div class="card-sub"><div class="sub-item"><div class="lbl">AED</div><div class="val">excl. card balances</div></div></div>
+      </div>
+      <div class="card" style="--line-color:var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Monthly Debt Payments</div>
+        <div class="card-value out">24,122</div>
+        <div class="card-sub"><div class="sub-item"><div class="lbl">As % of salary</div><div class="val out">60.3%</div></div></div>
+      </div>
+      <div class="card" style="--line-color:var(--accent)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Card Balances (both)</div>
+        <div class="card-value warn">76,821</div>
+        <div class="card-sub"><div class="sub-item"><div class="lbl">TP</div><div class="val out">48,423</div></div><div class="sub-item"><div class="lbl">365</div><div class="val out">28,398</div></div></div>
+      </div>
+      <div class="card" style="--line-color:var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="card-label">Combined Finance Charges</div>
+        <div class="card-value out">~9,900</div>
+        <div class="card-sub"><div class="sub-item"><div class="lbl">Over 6 months</div><div class="val out">≈1,650/mo</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-label">Debt Details</div>
+    <div class="debt-grid">
+      <!-- ADCB Personal Loan -->
+      <div class="debt-card" style="--line-color:var(--out)">
+        <div class="card-accent-line"></div>
+        <div class="debt-name">ADCB Personal Loan (Refinanced Jan '26)</div>
+        <div class="debt-balance">494,882 AED</div>
+        <div class="debt-row"><div class="k">Monthly EMI</div><div class="val out">11,955 AED</div></div>
+        <div class="debt-row"><div class="k">Interest Rate</div><div class="val">6.5%</div></div>
+        <div class="debt-row"><div class="k">Months to Payoff</div><div class="val">~47</div></div>
+        <div class="debt-row"><div class="k">Total Interest (est.)</div><div class="val out">67,003 AED</div></div>
+        <div class="debt-row"><div class="k">Refinanced</div><div class="val">13 Jan 2026</div></div>
+        <div class="progress-bar">
+          <div style="font-size:10px;color:var(--muted)">Payoff Progress</div>
+          <div class="progress-track"><div class="progress-fill" style="width:4%;--progress-color:var(--out)"></div></div>
+        </div>
+      </div>
+      <!-- Car Finance -->
+      <div class="debt-card">
+        <div class="debt-name">J8 Car Finance</div>
+        <div class="debt-balance">110,112 AED</div>
+        <div class="debt-row"><div class="k">Monthly Payment</div><div class="val out">2,167 AED</div></div>
+        <div class="debt-row"><div class="k">Interest Rate</div><div class="val">0% (flat)</div></div>
+        <div class="debt-row"><div class="k">Months to Payoff</div><div class="val">~51</div></div>
+        <div class="debt-row"><div class="k">Installment Recovery</div><div class="val">5th of month</div></div>
+        <div class="progress-bar">
+          <div style="font-size:10px;color:var(--muted)">Payoff Progress</div>
+          <div class="progress-track"><div class="progress-fill" style="width:6%;--progress-color:var(--bank)"></div></div>
+        </div>
+      </div>
+      <!-- TouchPoints Card -->
+      <div class="debt-card" style="border-color:rgba(167,139,250,0.3)">
+        <div class="debt-name">TouchPoints Infinite ···8918</div>
+        <div class="debt-balance" style="color:var(--tp)">48,423 AED</div>
+        <div class="debt-row"><div class="k">Credit Limit</div><div class="val">50,000 AED</div></div>
+        <div class="debt-row"><div class="k">Utilisation</div><div class="val out">96.8%</div></div>
+        <div class="debt-row"><div class="k">Finance Charges (Mar)</div><div class="val out">1,662 AED</div></div>
+        <div class="debt-row"><div class="k">Overlimit Charges (Mar)</div><div class="val out">288.75 AED</div></div>
+        <div class="debt-row"><div class="k">Available Credit</div><div class="val out">1,577 AED</div></div>
+        <div class="progress-bar">
+          <div style="font-size:10px;color:var(--muted)">Limit Used</div>
+          <div class="progress-track"><div class="progress-fill" style="width:96.8%;--progress-color:var(--out)"></div></div>
+        </div>
+      </div>
+      <!-- 365 Card -->
+      <div class="debt-card" style="border-color:rgba(249,115,22,0.3)">
+        <div class="debt-name">365 Cashback Platinum ···3250</div>
+        <div class="debt-balance" style="color:var(--c365)">28,398 AED</div>
+        <div class="debt-row"><div class="k">Credit Limit</div><div class="val">30,000 AED</div></div>
+        <div class="debt-row"><div class="k">Utilisation</div><div class="val out">94.7%</div></div>
+        <div class="debt-row"><div class="k">Finance Charges (Mar)</div><div class="val out">1,087 AED</div></div>
+        <div class="debt-row"><div class="k">Cashback Earned (Mar)</div><div class="val in">132 AED</div></div>
+        <div class="debt-row"><div class="k">Available Credit</div><div class="val out">1,602 AED</div></div>
+        <div class="progress-bar">
+          <div style="font-size:10px;color:var(--muted)">Limit Used</div>
+          <div class="progress-track"><div class="progress-fill" style="width:94.7%;--progress-color:var(--out)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.15s">
+    <div class="section-label">Debt Reduction Scenario</div>
+    <div class="card">
+      <table class="data-table">
+        <thead><tr><th>Scenario</th><th>Extra Monthly</th><th>Cards Clear By</th><th>Annual Interest Saved</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Current pace</td><td>—</td><td>Never (interest > payments)</td><td class="out">0</td><td>Cards growing</td></tr>
+          <tr><td>Pay min +5,000/mo to cards</td><td class="in">5,000 AED</td><td>~18 months</td><td class="in">~12,000</td><td>Aggressive but achievable</td></tr>
+          <tr><td>Pay min +10,000/mo to cards</td><td class="in">10,000 AED</td><td>~9 months</td><td class="in">~17,000</td><td>Requires GBP transfer reduction</td></tr>
+          <tr><td>Redirect GBP transfers to cards</td><td class="in">~8,000 AED</td><td>~11 months</td><td class="in">~15,000</td><td>Pause UK transfers 6 months</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ SAVINGS ═══════════════════════════════════ -->
+<div id="section-savings" style="display:none">
+  <div class="page-header">
+    <h1>SAVINGS <span>&amp; GOALS</span></h1>
+    <p>Savings pots · GBP &amp; AED · Current status</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.05s">
+    <div class="kpi-grid">
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Monthly Auto-Savings</div><div class="card-value in">1,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">Goal account</div><div class="val">AED</div></div></div></div>
+      <div class="card" style="--line-color:var(--in)"><div class="card-accent-line"></div><div class="card-label">Invested (GBP)</div><div class="card-value in">50,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">Target met ✅</div><div class="val">GBP</div></div></div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Emergency Fund Target</div><div class="card-value warn">30,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">AED · Progress</div><div class="val">Building</div></div></div></div>
+      <div class="card" style="--line-color:var(--accent)"><div class="card-accent-line"></div><div class="card-label">Rainy Day Target</div><div class="card-value warn">5,000</div><div class="card-sub"><div class="sub-item"><div class="lbl">GBP · Contribution</div><div class="val">100/mo</div></div></div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s">
+    <div class="section-label">Savings Pots</div>
+    <div class="savings-grid">
+      <div class="saving-card" style="border-color:rgba(110,231,183,0.3)">
+        <div class="saving-name">✅ Invested</div>
+        <div class="saving-balance" style="color:var(--in)">GBP 50,000</div>
+        <div class="saving-target">Target: GBP 50,000 — MET</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:100%;--progress-color:var(--in)"></div></div>
+      </div>
+      <div class="saving-card">
+        <div class="saving-name">🔵 Emergency Fund</div>
+        <div class="saving-balance" style="color:var(--bank)">AED 0 → building</div>
+        <div class="saving-target">Target: AED 30,000 · +2,000/mo</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:8%;--progress-color:var(--bank)"></div></div>
+      </div>
+      <div class="saving-card">
+        <div class="saving-name">🔵 Rainy Day Fund</div>
+        <div class="saving-balance" style="color:var(--bank)">GBP 0 → building</div>
+        <div class="saving-target">Target: GBP 5,000 · +100/mo</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:2%;--progress-color:var(--bank)"></div></div>
+      </div>
+      <div class="saving-card">
+        <div class="saving-name">⬜ Holiday Fund</div>
+        <div class="saving-balance muted">GBP 0</div>
+        <div class="saving-target">No target set</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="saving-card">
+        <div class="saving-name">⬜ House Deposit</div>
+        <div class="saving-balance muted">GBP 0</div>
+        <div class="saving-target">No target set</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="saving-card">
+        <div class="saving-name">⬜ Children Education</div>
+        <div class="saving-balance muted">GBP 0</div>
+        <div class="saving-target">No target set</div>
+        <div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.15s">
+    <div class="section-label">Goal Savings Account (ADCB)</div>
+    <div class="card">
+      <div class="bar-row"><div class="bar-label">Jan 2026</div><div class="bar-track"><div class="bar-fill" style="width:33%;--bar-color:var(--in)"></div></div><div class="bar-amount in">1,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Feb 2026</div><div class="bar-track"><div class="bar-fill" style="width:66%;--bar-color:var(--in)"></div></div><div class="bar-amount in">2,000 AED</div></div>
+      <div class="bar-row"><div class="bar-label">Mar 2026</div><div class="bar-track"><div class="bar-fill" style="width:100%;--bar-color:var(--in)"></div></div><div class="bar-amount in">3,000 AED</div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:12px">Systematic transfer of 1,000 AED on 1st of each month. Oct–Dec 2025 transfers not detected in bank statement.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ ALERTS ═══════════════════════════════════ -->
+<div id="section-alerts" style="display:none">
+  <div class="page-header">
+    <h1>FLAGS <span>&amp; ALERTS</span></h1>
+    <p>Financial health indicators · Apr 2026</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.05s">
+    <div class="section-label">🔴 Critical</div>
+    <div class="alert" style="--alert-color:#f87171">
+      <div class="alert-icon">🔴</div>
+      <div><div class="alert-title">Both credit cards at limit — generating finance charges every month</div><div class="alert-body">TouchPoints (96.8% used) and 365 (94.7% used) are both near their limits. Combined finance charges in March alone were 3,037 AED. Annualised that's ~36,444 AED/year in interest on top of purchases. Both have incurred overlimit charges multiple times. Until these are paid down, cashback on the 365 card is completely neutralised.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#f87171">
+      <div class="alert-icon">🔴</div>
+      <div><div class="alert-title">Debt-to-income ratio is very high — 60%+ of salary goes to debt payments</div><div class="alert-body">Monthly debt obligations: Loan EMI 11,955 + Car Finance 2,167 + minimum card payments (~8,000 combined) = ~22,122 AED. Against a 40,000 AED salary that is 55%+ before any living expenses. This leaves very little headroom without the GBP investment income.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#f87171">
+      <div class="alert-icon">🔴</div>
+      <div><div class="alert-title">BNPL exposure is growing and hard to track</div><div class="alert-body">Tabby and Tamara payments appear across bank account AND both credit cards. Active instalments from multiple retailers. Deferred payments arriving in future months are a hidden liability not fully reflected in current balances.</div></div>
+    </div>
+
+    <div class="section-label" style="margin-top:32px">⚠️ Warnings</div>
+    <div class="alert" style="--alert-color:#e8c547">
+      <div class="alert-icon">⚠️</div>
+      <div><div class="alert-title">ATM withdrawals total 32,500 AED over 6 months — untracked spend</div><div class="alert-body">Average 5,417 AED/month in cash. This cash spend is invisible in any category breakdown. March alone had 7,900 AED withdrawn. Consider moving to card-only for trackability, or at minimum recording cash spend separately.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#e8c547">
+      <div class="alert-icon">⚠️</div>
+      <div><div class="alert-title">Family/staff transfers total ~24,600 AED over 6 months</div><div class="alert-body">Regular transfers to: Himani Agrawal (~375/mo), Adil Khan (~300/mo), Bilal Pervez (variable, 800–4,446), Nauman Fayaz (variable), others (Farooq Haider, ShAMSUL, Nejeeb Vattathoor, Konstantin Voronin). These appear to be ongoing obligations not tracked in the expense sheet. Nov was particularly high with a 23,000 AED transfer to Khate Ann Ruance.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#e8c547">
+      <div class="alert-icon">⚠️</div>
+      <div><div class="alert-title">GBP transfers to UK: 71,597 AED sent in 6 months</div><div class="alert-body">Nov 2025 was exceptional (42,421 AED including GBP 8,500 total). Jan 2026 had GBP 12,000 total (61,574 AED incl. fees). These transfers significantly reduce AED liquidity. Ensure UK account balance and purpose is reflected in your net worth tracking.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#e8c547">
+      <div class="alert-icon">⚠️</div>
+      <div><div class="alert-title">Subscriptions costing ~2,065 AED/month across multiple cards</div><div class="alert-body">10+ active subscriptions spread across bank account, TP card and 365 card. PlanNet / InteleTravel relationship warrants a ROI review — these are MLM-adjacent travel businesses. Virgin Media (UK broadband) is billed in GBP and costing ~770 AED/month due to FX conversion on a credit card.</div></div>
+    </div>
+
+    <div class="section-label" style="margin-top:32px">✅ Positives</div>
+    <div class="alert" style="--alert-color:#6ee7b7">
+      <div class="alert-icon">✅</div>
+      <div><div class="alert-title">GBP 50,000 investment target already met</div><div class="alert-body">Investment pot is at target. Continued monthly GBP transfers are building further UK-side wealth. This is the primary hedge against AED concentration risk.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#6ee7b7">
+      <div class="alert-icon">✅</div>
+      <div><div class="alert-title">Systematic savings habit established (1,000 AED/month)</div><div class="alert-body">Auto-transfer on the 1st of each month into goal savings since January. Small but consistent — the key is to increase this as debt reduces.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#6ee7b7">
+      <div class="alert-icon">✅</div>
+      <div><div class="alert-title">Cashback on 365 card: 131.95 AED in March alone</div><div class="alert-body">6% dining, 5% grocery, 3% fuel structure is well-suited to your spending patterns. Maximise this by routing ALL dining, grocery and ADNOC through this card — but only once the balance is meaningfully reduced so finance charges don't dwarf cashback.</div></div>
+    </div>
+    <div class="alert" style="--alert-color:#6ee7b7">
+      <div class="alert-icon">✅</div>
+      <div><div class="alert-title">Loan successfully refinanced in January 2026</div><div class="alert-body">Existing loan settled (398,655 AED) and new 502,033 AED loan disbursed on the same day. EMI increase from 9,519 to 11,955 (+2,436/month) but the additional liquidity was used for the large CONSILIARI and UK transfers in surrounding months.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Perry Sutherland · ADCB · Oct 2025 – Mar 2026</span>
+  <span>3 accounts · 6 months · All values AED unless stated</span>
+  <span>Generated Apr 2026</span>
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+function showSection(id) {
+  ['overview','monthly','spending','debts','savings','alerts'].forEach(s => {
+    document.getElementById('section-'+s).style.display = (s===id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-link').forEach((btn,i) => {
+    btn.classList.toggle('active', ['overview','monthly','spending','debts','savings','alerts'][i]===id);
+  });
+}
+
+function showMonth(id, btn) {
+  document.querySelectorAll('.month-detail').forEach(el => el.classList.remove('active'));
+  document.getElementById('month-'+id).classList.add('active');
+  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
