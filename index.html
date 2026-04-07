@@ -662,6 +662,9 @@
     .ag4, .ag3, .ag2 { grid-template-columns: repeat(2, 1fr); }
     .link-grid { grid-template-columns: repeat(2, 1fr); }
     .admin-nav { padding: 0 20px; }
+    #school-grid { grid-template-columns: 1fr !important; }
+    #school-grid > div { border-right: none !important; border-bottom: 1px solid #e8e4dc; }
+    #school-grid > div:last-child { border-bottom: none; }
   }
 
   /* Lightbox */
@@ -890,6 +893,7 @@
       <button class="pub-nav-btn" onclick="pubTab('calendar', this)">Calendar</button>
       <button class="pub-nav-btn" onclick="pubTab('gallery', this)">Gallery</button>
       <button class="pub-nav-btn" onclick="pubTab('updates', this)">Updates</button>
+      <button class="pub-nav-btn" onclick="pubTab('school', this)">School</button>
     </div>
     <button class="pub-admin-btn" onclick="showPage('page-gate')">Admin ↗</button>
     <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
@@ -902,6 +906,7 @@
     <button class="mobile-menu-btn" onclick="mobileNav('calendar', this)">Calendar</button>
     <button class="mobile-menu-btn" onclick="mobileNav('gallery', this)">Gallery</button>
     <button class="mobile-menu-btn" onclick="mobileNav('updates', this)">Updates</button>
+    <button class="mobile-menu-btn" onclick="mobileNav('school', this)">School</button>
     <button class="mobile-menu-admin" onclick="toggleMobileMenu(); showPage('page-gate')">Admin ↗</button>
   </div>
 
@@ -1189,6 +1194,48 @@
     </div>
   </div>
 
+  <!-- SCHOOL DASHBOARD TAB -->
+  <div id="pub-school" class="pub-tab">
+    <div style="text-align:center;padding:36px 24px 24px;border-bottom:1px solid #e8e4dc;">
+      <div class="sec-eyebrow">Brighton College Al Ain</div>
+      <div class="sec-title" style="margin-bottom:6px;">School Live Dashboard</div>
+      <div style="font-size:14px;color:#8a8479;">Online Learning Day</div>
+      <div id="school-clock" style="font-family:'DM Sans',sans-serif;font-size:42px;font-weight:300;color:#1a1814;margin-top:16px;letter-spacing:0.04em;">--:--:--</div>
+      <div id="school-date" style="font-size:13px;color:#a09889;margin-top:4px;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;max-width:1200px;margin:0 auto;" id="school-grid">
+      <!-- HARVEY -->
+      <div style="padding:28px 32px 40px;border-right:1px solid #e8e4dc;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#3d6b5e;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#fff;">H</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;">Harvey</div>
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8a8479;">Year 5 · 5S Salamander</div>
+          </div>
+        </div>
+        <div id="school-harvey-now"></div>
+        <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8479;margin-bottom:14px;font-weight:500;">Today's Schedule</div>
+        <div id="school-harvey-schedule"></div>
+      </div>
+      <!-- HARRISON -->
+      <div style="padding:28px 32px 40px;">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#6b5a3d;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#fff;">H</div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;">Harrison</div>
+            <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#8a8479;">Year 2 · 2S</div>
+          </div>
+        </div>
+        <div id="school-harrison-now"></div>
+        <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8479;margin-bottom:14px;font-weight:500;">Today's Schedule</div>
+        <div id="school-harrison-schedule"></div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:24px;border-top:1px solid #e8e4dc;font-size:11px;color:#a09889;letter-spacing:0.06em;">
+      Auto-refreshes every 60 seconds
+    </div>
+  </div>
+
 </div><!-- /page-public -->
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -1460,6 +1507,117 @@
     window.scrollTo(0, 0);
     if (id === 'calendar') renderCalendar();
   }
+
+  /* ════════════════════════════════════════
+     SCHOOL LIVE DASHBOARD
+  ════════════════════════════════════════ */
+  (function() {
+    var harveyTT = [
+      { start:'07:45', end:'07:55', subject:'Registration', teacher:'Mr H / Mrs Harnett', type:'live' },
+      { start:'08:00', end:'08:20', subject:'Maths', teacher:'Live Lesson', type:'live' },
+      { start:'08:20', end:'08:40', subject:'Maths Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'08:40', end:'09:00', subject:'Arabic', teacher:'Mr Amer', type:'live' },
+      { start:'09:00', end:'09:20', subject:'MOE Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'09:25', end:'09:45', subject:'Arabic', teacher:'Mr Amer', type:'live' },
+      { start:'09:45', end:'10:05', subject:'MOE Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'10:05', end:'10:35', subject:'Morning Break', teacher:'', type:'break' },
+      { start:'10:35', end:'10:55', subject:'English', teacher:'Live Lesson', type:'live' },
+      { start:'10:55', end:'11:15', subject:'English Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'11:20', end:'11:40', subject:'English Task', teacher:'Online — max 20 mins', type:'online' },
+      { start:'11:40', end:'12:00', subject:'English Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'12:05', end:'12:25', subject:'MyMaths / WRM Infinity', teacher:'Seesaw', type:'online' },
+      { start:'12:25', end:'12:45', subject:'Maths Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'12:45', end:'13:35', subject:'Afternoon Break', teacher:'', type:'break' },
+      { start:'13:35', end:'13:55', subject:'Science', teacher:'Mrs Harnett — Live', type:'live' },
+      { start:'13:55', end:'14:15', subject:'Science Follow-up Task', teacher:'Offline', type:'offline' },
+      { start:'14:20', end:'15:00', subject:'Independent Offline Tasks', teacher:'Accelerated Reader, PIRLs, Atom Learning', type:'offline' }
+    ];
+    var harrisonTT = [
+      { start:'07:45', end:'07:55', subject:'Check In', teacher:'Mrs Campbell', type:'live' },
+      { start:'08:00', end:'08:20', subject:'English', teacher:'Mrs Campbell — Live', type:'live' },
+      { start:'08:20', end:'08:40', subject:'English Follow-up', teacher:'Offline', type:'offline' },
+      { start:'08:40', end:'09:00', subject:'P.E.', teacher:'Mrs Grice-Glover', type:'live' },
+      { start:'09:00', end:'09:25', subject:'P.E. Follow-up', teacher:'Offline', type:'offline' },
+      { start:'09:25', end:'10:00', subject:'Morning Break', teacher:'', type:'break' },
+      { start:'10:00', end:'10:15', subject:'Phonics / Guided Reading', teacher:'Mrs Campbell', type:'live' },
+      { start:'10:15', end:'10:40', subject:'Reading Follow-up', teacher:'Offline', type:'offline' },
+      { start:'10:40', end:'10:55', subject:'English Task', teacher:'Seesaw — max 15 mins', type:'online' },
+      { start:'10:55', end:'11:20', subject:'English Follow-up', teacher:'Offline', type:'offline' },
+      { start:'11:20', end:'11:40', subject:'Maths', teacher:'Mrs Campbell — Live', type:'live' },
+      { start:'11:40', end:'12:05', subject:'Maths Follow-up', teacher:'Offline', type:'offline' },
+      { start:'12:05', end:'12:25', subject:'Arabic', teacher:'Ms Rana — Live', type:'live' },
+      { start:'12:25', end:'12:45', subject:'Arabic Follow-up', teacher:'Offline', type:'offline' },
+      { start:'12:45', end:'13:35', subject:'Afternoon Break', teacher:'', type:'break' },
+      { start:'13:35', end:'13:55', subject:'LAMDA', teacher:'Mrs Arendse', type:'live' },
+      { start:'13:55', end:'14:20', subject:'LAMDA Follow-up', teacher:'Offline', type:'offline' },
+      { start:'14:20', end:'14:40', subject:'Maths Task', teacher:'Seesaw — max 20 mins', type:'online' }
+    ];
+
+    function ttToMins(s){var p=s.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
+    function ttFmtCD(t){if(t<=0)return'00:00';var m=Math.floor(t/60),s=t%60;return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
+    function ttNowM(){var n=new Date();return n.getHours()*60+n.getMinutes();}
+    function ttNowS(){var n=new Date();return n.getHours()*3600+n.getMinutes()*60+n.getSeconds();}
+    function ttTypeLabel(t){return t==='live'?'Live Lesson':t==='online'?'Online Task':t==='break'?'Break':'Offline';}
+    function ttTypeBg(t){return t==='live'?'#2e7d5b':t==='online'?'#4a6fa5':t==='break'?'#6b5a3d':'#3a3832';}
+    function ttTypeFg(t){return t==='live'||t==='online'||t==='break'?'#fff':'#a09889';}
+    function ttDotCol(t){return t==='live'?'#2e7d5b':t==='online'?'#4a6fa5':t==='break'?'#c9a96e':'#d4cfc6';}
+    function ttBadgeBg(t){return t==='live'?'#e8f5ee':t==='online'?'#e8eef5':t==='break'?'#f5f0e8':'#f0ede8';}
+    function ttBadgeFg(t){return t==='live'?'#2e7d5b':t==='online'?'#4a6fa5':t==='break'?'#6b5a3d':'#8a8479';}
+
+    function ttFindCur(sch,nm){for(var i=0;i<sch.length;i++){if(nm>=ttToMins(sch[i].start)&&nm<ttToMins(sch[i].end))return i;}return-1;}
+    function ttFindNxt(sch,nm){for(var i=0;i<sch.length;i++){if(ttToMins(sch[i].start)>nm)return i;}return-1;}
+
+    function ttRenderNow(id,sch){
+      var nm=ttNowM(),ns=ttNowS(),el=document.getElementById(id);
+      if(!el)return;
+      var ci=ttFindCur(sch,nm);
+      if(ci===-1){
+        var ni=ttFindNxt(sch,nm);
+        if(ni===-1){
+          el.innerHTML='<div style="text-align:center;padding:28px 20px;background:#f4f2ee;border-radius:8px;margin-bottom:20px;"><div style="font-size:28px;margin-bottom:6px;">&#10003;</div><div style="font-family:Playfair Display,serif;font-size:18px;">School day complete</div><div style="font-size:13px;color:#8a8479;margin-top:4px;">All lessons finished for today</div></div>';
+        } else {
+          var nx=sch[ni],su=ttToMins(nx.start)*60-ns;
+          el.innerHTML='<div style="background:#f4f2ee;border-radius:8px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#c9a96e;"></div><div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8a8479;margin-bottom:8px;font-weight:500;">Up Next</div><div style="display:inline-block;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-bottom:12px;background:'+ttTypeBg(nx.type)+';color:'+ttTypeFg(nx.type)+';">'+ttTypeLabel(nx.type)+'</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:600;margin-bottom:4px;">'+nx.subject+'</div>'+(nx.teacher?'<div style="font-size:13px;color:#8a8479;margin-bottom:14px;">'+nx.teacher+'</div>':'')+'<div style="display:flex;align-items:center;"><div style="font-size:13px;color:#8a8479;">'+nx.start+' – '+nx.end+'</div><div style="margin-left:auto;text-align:right;"><div style="font-size:20px;font-weight:500;color:#1a1814;">'+ttFmtCD(su)+'</div><div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#a09889;">starts in</div></div></div></div>';
+        }
+        return;
+      }
+      var c=sch[ci],es=ttToMins(c.end)*60,ss=ttToMins(c.start)*60,left=es-ns,dur=es-ss,pct=Math.min(100,Math.round(((ns-ss)/dur)*100));
+      el.innerHTML='<div style="background:#1a1814;color:#faf9f6;border-radius:8px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#c9a96e;"></div><div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#c9a96e;margin-bottom:8px;font-weight:500;">Happening Now</div><div style="display:inline-block;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-bottom:12px;background:'+ttTypeBg(c.type)+';color:'+ttTypeFg(c.type)+';">'+ttTypeLabel(c.type)+'</div><div style="font-family:Playfair Display,serif;font-size:22px;font-weight:600;margin-bottom:4px;">'+c.subject+'</div>'+(c.teacher?'<div style="font-size:13px;color:#a09889;margin-bottom:14px;">'+c.teacher+'</div>':'')+'<div style="display:flex;align-items:center;"><div style="font-size:13px;color:#a09889;">'+c.start+' – '+c.end+'</div><div style="margin-left:auto;text-align:right;"><div style="font-size:20px;font-weight:500;color:#c9a96e;">'+ttFmtCD(left)+'</div><div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#706b62;">remaining</div></div></div><div style="background:#3a3832;height:4px;border-radius:2px;margin-top:14px;overflow:hidden;"><div style="height:100%;background:#c9a96e;border-radius:2px;width:'+pct+'%;transition:width 1s linear;"></div></div></div>';
+    }
+
+    function ttRenderSched(id,sch){
+      var nm=ttNowM(),el=document.getElementById(id);
+      if(!el)return;
+      var h='';
+      for(var i=0;i<sch.length;i++){
+        var l=sch[i],s=ttToMins(l.start),e=ttToMins(l.end),past=nm>=e,cur=nm>=s&&nm<e;
+        h+='<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eae6df;'+(past?'opacity:0.35;':'')+(cur?'background:#f9f7f3;border-radius:6px;padding:12px 10px;margin:0 -10px;':'')+'"><div style="font-size:12px;color:#8a8479;min-width:88px;font-variant-numeric:tabular-nums;">'+l.start+' – '+l.end+'</div><div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+ttDotCol(l.type)+';"></div><div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#1a1814;">'+l.subject+(cur?' &#9679;':'')+'</div>'+(l.teacher?'<div style="font-size:12px;color:#a09889;margin-top:2px;">'+l.teacher+'</div>':'')+'</div><div style="font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:2px;flex-shrink:0;background:'+ttBadgeBg(l.type)+';color:'+ttBadgeFg(l.type)+';">'+ttTypeLabel(l.type)+'</div></div>';
+      }
+      el.innerHTML=h;
+    }
+
+    function ttClock(){
+      var n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
+      var ce=document.getElementById('school-clock');
+      if(ce)ce.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+      var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var de=document.getElementById('school-date');
+      if(de)de.textContent=days[n.getDay()]+' '+n.getDate()+' '+months[n.getMonth()]+' '+n.getFullYear();
+    }
+
+    function ttUpdate(){
+      ttClock();
+      ttRenderNow('school-harvey-now',harveyTT);
+      ttRenderNow('school-harrison-now',harrisonTT);
+      ttRenderSched('school-harvey-schedule',harveyTT);
+      ttRenderSched('school-harrison-schedule',harrisonTT);
+    }
+
+    ttUpdate();
+    setInterval(ttClock,1000);
+    setInterval(ttUpdate,60000);
+  })();
 
   /* ════════════════════════════════════════
      LIVE DATE IN ADMIN

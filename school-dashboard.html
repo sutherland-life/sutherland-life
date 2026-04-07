@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School Dashboard · Sutherland | Life</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #faf9f6;
+    color: #1a1814;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,249,246,0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e8e4dc;
+    padding: 0 48px;
+    display: flex; align-items: center; height: 60px;
+  }
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-style: italic;
+    letter-spacing: 0.06em; color: #1a1814;
+    margin-right: auto;
+  }
+  .nav-badge {
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 6px 14px;
+    border: 1px solid #d4cfc6; border-radius: 2px;
+    color: #8a8479; font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #8a8479;
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 600;
+    color: #1a1814; margin-bottom: 8px;
+  }
+  .hero-sub {
+    font-size: 14px; color: #8a8479;
+  }
+  .hero-clock {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 42px; font-weight: 300;
+    color: #1a1814; margin-top: 20px;
+    letter-spacing: 0.04em;
+  }
+  .hero-date {
+    font-size: 13px; color: #a09889; margin-top: 4px;
+  }
+
+  /* ── GRID ── */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ── CHILD COLUMN ── */
+  .child-col {
+    padding: 32px 36px 48px;
+    border-right: 1px solid #e8e4dc;
+  }
+  .child-col:last-child { border-right: none; }
+
+  .child-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px;
+  }
+  .child-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 600; color: #fff;
+  }
+  .avatar-harvey { background: #3d6b5e; }
+  .avatar-harrison { background: #6b5a3d; }
+
+  .child-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600;
+  }
+  .child-class {
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #8a8479;
+  }
+
+  /* ── NOW CARD ── */
+  .now-card {
+    background: #1a1814;
+    color: #faf9f6;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .now-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: #c9a96e;
+  }
+  .now-label {
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #c9a96e;
+    margin-bottom: 10px; font-weight: 500;
+  }
+  .now-subject {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .now-teacher {
+    font-size: 13px; color: #a09889; margin-bottom: 16px;
+  }
+  .now-meta {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .now-time {
+    font-size: 13px; color: #a09889;
+  }
+  .now-countdown {
+    font-size: 20px; font-weight: 500;
+    color: #c9a96e; letter-spacing: 0.02em;
+  }
+  .now-countdown-label {
+    font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #706b62;
+  }
+  .now-type {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 10px;
+    border-radius: 2px; margin-bottom: 14px;
+  }
+  .type-live { background: #2e7d5b; color: #fff; }
+  .type-online { background: #4a6fa5; color: #fff; }
+  .type-offline { background: #3a3832; color: #a09889; }
+  .type-break { background: #6b5a3d; color: #faf9f6; }
+
+  .now-done {
+    text-align: center; padding: 32px 24px;
+    background: #f4f2ee; border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  .now-done-icon { font-size: 32px; margin-bottom: 8px; }
+  .now-done-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: #1a1814;
+  }
+  .now-done-sub { font-size: 13px; color: #8a8479; margin-top: 4px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: #3a3832;
+    height: 4px; border-radius: 2px;
+    margin-top: 16px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; background: #c9a96e;
+    border-radius: 2px; transition: width 1s linear;
+  }
+
+  /* ── UPCOMING ── */
+  .upcoming-title {
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #8a8479;
+    margin-bottom: 14px; font-weight: 500;
+  }
+  .lesson-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #eae6df;
+  }
+  .lesson-row:last-child { border-bottom: none; }
+  .lesson-row.is-past { opacity: 0.35; }
+
+  .lesson-time {
+    font-size: 12px; color: #8a8479;
+    min-width: 90px; font-variant-numeric: tabular-nums;
+  }
+  .lesson-dot {
+    width: 8px; height: 8px;
+    border-radius: 50; flex-shrink: 0;
+    border-radius: 50%;
+  }
+  .dot-live { background: #2e7d5b; }
+  .dot-online { background: #4a6fa5; }
+  .dot-offline { background: #d4cfc6; }
+  .dot-break { background: #c9a96e; }
+
+  .lesson-info { flex: 1; }
+  .lesson-subject {
+    font-size: 14px; font-weight: 500; color: #1a1814;
+  }
+  .lesson-detail {
+    font-size: 12px; color: #a09889; margin-top: 2px;
+  }
+
+  .lesson-badge {
+    font-size: 9px; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 2px 8px;
+    border-radius: 2px; flex-shrink: 0;
+  }
+  .badge-live { background: #e8f5ee; color: #2e7d5b; }
+  .badge-online { background: #e8eef5; color: #4a6fa5; }
+  .badge-offline { background: #f0ede8; color: #8a8479; }
+  .badge-break { background: #f5f0e8; color: #6b5a3d; }
+
+  /* ── FOOTER ── */
+  .dash-footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid #e8e4dc;
+    font-size: 11px; color: #a09889;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav { padding: 0 20px; }
+    .hero { padding: 32px 20px 24px; }
+    .hero-title { font-size: 24px; }
+    .hero-clock { font-size: 32px; }
+    .dashboard { grid-template-columns: 1fr; }
+    .child-col { padding: 24px 20px 36px; border-right: none; border-bottom: 1px solid #e8e4dc; }
+    .child-col:last-child { border-bottom: none; }
+    .now-subject { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">Sutherland &nbsp;&middot;&nbsp; Life</div>
+  <div class="nav-badge">Brighton College Al Ain</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Brighton College Al Ain</div>
+  <div class="hero-title">School Live Dashboard</div>
+  <div class="hero-sub">Tuesday 7th April &middot; Online Learning Day</div>
+  <div class="hero-clock" id="live-clock">--:--:--</div>
+  <div class="hero-date" id="live-date"></div>
+</div>
+
+<div class="dashboard">
+  <!-- HARVEY -->
+  <div class="child-col">
+    <div class="child-header">
+      <div class="child-avatar avatar-harvey">H</div>
+      <div>
+        <div class="child-name">Harvey</div>
+        <div class="child-class">Year 5 &middot; 5S Salamander</div>
+      </div>
+    </div>
+    <div id="harvey-now"></div>
+    <div class="upcoming-title">Today's Schedule</div>
+    <div id="harvey-schedule"></div>
+  </div>
+
+  <!-- HARRISON -->
+  <div class="child-col">
+    <div class="child-header">
+      <div class="child-avatar avatar-harrison">H</div>
+      <div>
+        <div class="child-name">Harrison</div>
+        <div class="child-class">Year 2 &middot; 2S</div>
+      </div>
+    </div>
+    <div id="harrison-now"></div>
+    <div class="upcoming-title">Today's Schedule</div>
+    <div id="harrison-schedule"></div>
+  </div>
+</div>
+
+<div class="dash-footer">
+  Auto-refreshes every 60 seconds &middot; Sutherland | Life
+</div>
+
+<script>
+(function() {
+
+  /* ── TIMETABLE DATA ── */
+  var harvey = [
+    { start:'07:45', end:'07:55', subject:'Registration', teacher:'Mr H / Mrs Harnett', type:'live' },
+    { start:'08:00', end:'08:20', subject:'Maths', teacher:'Live Lesson', type:'live' },
+    { start:'08:20', end:'08:40', subject:'Maths Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'08:40', end:'09:00', subject:'Arabic', teacher:'Mr Amer', type:'live' },
+    { start:'09:00', end:'09:20', subject:'MOE Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'09:25', end:'09:45', subject:'Arabic', teacher:'Mr Amer', type:'live' },
+    { start:'09:45', end:'10:05', subject:'MOE Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'10:05', end:'10:35', subject:'Morning Break', teacher:'', type:'break' },
+    { start:'10:35', end:'10:55', subject:'English', teacher:'Live Lesson', type:'live' },
+    { start:'10:55', end:'11:15', subject:'English Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'11:20', end:'11:40', subject:'English Task', teacher:'Online — max 20 mins', type:'online' },
+    { start:'11:40', end:'12:00', subject:'English Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'12:05', end:'12:25', subject:'MyMaths / WRM Infinity', teacher:'Seesaw', type:'online' },
+    { start:'12:25', end:'12:45', subject:'Maths Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'12:45', end:'13:35', subject:'Afternoon Break', teacher:'', type:'break' },
+    { start:'13:35', end:'13:55', subject:'Science', teacher:'Mrs Harnett — Live', type:'live' },
+    { start:'13:55', end:'14:15', subject:'Science Follow-up Task', teacher:'Offline', type:'offline' },
+    { start:'14:20', end:'15:00', subject:'Independent Offline Tasks', teacher:'Accelerated Reader, PIRLs, Atom Learning', type:'offline' }
+  ];
+
+  var harrison = [
+    { start:'07:45', end:'07:55', subject:'Check In', teacher:'Mrs Campbell', type:'live' },
+    { start:'08:00', end:'08:20', subject:'English', teacher:'Mrs Campbell — Live', type:'live' },
+    { start:'08:20', end:'08:40', subject:'English Follow-up', teacher:'Offline', type:'offline' },
+    { start:'08:40', end:'09:00', subject:'P.E.', teacher:'Mrs Grice-Glover', type:'live' },
+    { start:'09:00', end:'09:25', subject:'P.E. Follow-up', teacher:'Offline', type:'offline' },
+    { start:'09:25', end:'10:00', subject:'Morning Break', teacher:'', type:'break' },
+    { start:'10:00', end:'10:15', subject:'Phonics / Guided Reading', teacher:'Mrs Campbell', type:'live' },
+    { start:'10:15', end:'10:40', subject:'Reading Follow-up', teacher:'Offline', type:'offline' },
+    { start:'10:40', end:'10:55', subject:'English Task', teacher:'Seesaw — max 15 mins', type:'online' },
+    { start:'10:55', end:'11:20', subject:'English Follow-up', teacher:'Offline', type:'offline' },
+    { start:'11:20', end:'11:40', subject:'Maths', teacher:'Mrs Campbell — Live', type:'live' },
+    { start:'11:40', end:'12:05', subject:'Maths Follow-up', teacher:'Offline', type:'offline' },
+    { start:'12:05', end:'12:25', subject:'Arabic', teacher:'Ms Rana — Live', type:'live' },
+    { start:'12:25', end:'12:45', subject:'Arabic Follow-up', teacher:'Offline', type:'offline' },
+    { start:'12:45', end:'13:35', subject:'Afternoon Break', teacher:'', type:'break' },
+    { start:'13:35', end:'13:55', subject:'LAMDA', teacher:'Mrs Arendse', type:'live' },
+    { start:'13:55', end:'14:20', subject:'LAMDA Follow-up', teacher:'Offline', type:'offline' },
+    { start:'14:20', end:'14:40', subject:'Maths Task', teacher:'Seesaw — max 20 mins', type:'online' }
+  ];
+
+  /* ── HELPERS ── */
+  function timeToMins(str) {
+    var p = str.split(':');
+    return parseInt(p[0]) * 60 + parseInt(p[1]);
+  }
+
+  function minsToStr(m) {
+    var h = Math.floor(m / 60);
+    var mm = m % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (mm < 10 ? '0' : '') + mm;
+  }
+
+  function formatCountdown(totalSecs) {
+    if (totalSecs <= 0) return '00:00';
+    var m = Math.floor(totalSecs / 60);
+    var s = totalSecs % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function getNowMins() {
+    var n = new Date();
+    return n.getHours() * 60 + n.getMinutes();
+  }
+
+  function getNowSecs() {
+    var n = new Date();
+    return n.getHours() * 3600 + n.getMinutes() * 60 + n.getSeconds();
+  }
+
+  function typeBadgeClass(t) {
+    if (t === 'live') return 'badge-live';
+    if (t === 'online') return 'badge-online';
+    if (t === 'break') return 'badge-break';
+    return 'badge-offline';
+  }
+  function typeDotClass(t) {
+    if (t === 'live') return 'dot-live';
+    if (t === 'online') return 'dot-online';
+    if (t === 'break') return 'dot-break';
+    return 'dot-offline';
+  }
+  function typeNowClass(t) {
+    if (t === 'live') return 'type-live';
+    if (t === 'online') return 'type-online';
+    if (t === 'break') return 'type-break';
+    return 'type-offline';
+  }
+  function typeLabel(t) {
+    if (t === 'live') return 'Live Lesson';
+    if (t === 'online') return 'Online Task';
+    if (t === 'break') return 'Break';
+    return 'Offline';
+  }
+
+  /* ── FIND CURRENT + NEXT ── */
+  function findCurrent(schedule, nowMins) {
+    for (var i = 0; i < schedule.length; i++) {
+      var s = timeToMins(schedule[i].start);
+      var e = timeToMins(schedule[i].end);
+      if (nowMins >= s && nowMins < e) return i;
+    }
+    return -1;
+  }
+  function findNext(schedule, nowMins) {
+    for (var i = 0; i < schedule.length; i++) {
+      if (timeToMins(schedule[i].start) > nowMins) return i;
+    }
+    return -1;
+  }
+
+  /* ── RENDER NOW CARD ── */
+  function renderNow(containerId, schedule) {
+    var nowMins = getNowMins();
+    var nowSecs = getNowSecs();
+    var el = document.getElementById(containerId);
+    var ci = findCurrent(schedule, nowMins);
+
+    if (ci === -1) {
+      var ni = findNext(schedule, nowMins);
+      if (ni === -1) {
+        // School day finished
+        el.innerHTML =
+          '<div class="now-done">' +
+            '<div class="now-done-icon">&#10003;</div>' +
+            '<div class="now-done-text">School day complete</div>' +
+            '<div class="now-done-sub">All lessons finished for today</div>' +
+          '</div>';
+      } else {
+        // Between lessons or before school
+        var next = schedule[ni];
+        var startSecs = timeToMins(next.start) * 60;
+        var secsUntil = startSecs - nowSecs;
+        el.innerHTML =
+          '<div class="now-card" style="background:#f4f2ee;color:#1a1814;">' +
+            '<div class="now-label" style="color:#8a8479;">Up Next</div>' +
+            '<div class="now-type ' + typeNowClass(next.type) + '">' + typeLabel(next.type) + '</div>' +
+            '<div class="now-subject" style="font-size:20px;">' + next.subject + '</div>' +
+            (next.teacher ? '<div class="now-teacher" style="color:#8a8479;">' + next.teacher + '</div>' : '') +
+            '<div class="now-meta">' +
+              '<div class="now-time" style="color:#8a8479;">' + next.start + ' – ' + next.end + '</div>' +
+              '<div style="margin-left:auto;text-align:right;">' +
+                '<div class="now-countdown" style="color:#1a1814;">' + formatCountdown(secsUntil) + '</div>' +
+                '<div class="now-countdown-label" style="color:#a09889;">starts in</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      }
+      return;
+    }
+
+    var cur = schedule[ci];
+    var endSecs = timeToMins(cur.end) * 60;
+    var startSecs = timeToMins(cur.start) * 60;
+    var secsLeft = endSecs - nowSecs;
+    var totalDur = endSecs - startSecs;
+    var elapsed = nowSecs - startSecs;
+    var pct = Math.min(100, Math.round((elapsed / totalDur) * 100));
+
+    el.innerHTML =
+      '<div class="now-card">' +
+        '<div class="now-label">Happening Now</div>' +
+        '<div class="now-type ' + typeNowClass(cur.type) + '">' + typeLabel(cur.type) + '</div>' +
+        '<div class="now-subject">' + cur.subject + '</div>' +
+        (cur.teacher ? '<div class="now-teacher">' + cur.teacher + '</div>' : '') +
+        '<div class="now-meta">' +
+          '<div class="now-time">' + cur.start + ' – ' + cur.end + '</div>' +
+          '<div style="margin-left:auto;text-align:right;">' +
+            '<div class="now-countdown">' + formatCountdown(secsLeft) + '</div>' +
+            '<div class="now-countdown-label">remaining</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>' +
+      '</div>';
+  }
+
+  /* ── RENDER SCHEDULE ── */
+  function renderSchedule(containerId, schedule) {
+    var nowMins = getNowMins();
+    var html = '';
+    for (var i = 0; i < schedule.length; i++) {
+      var l = schedule[i];
+      var s = timeToMins(l.start);
+      var e = timeToMins(l.end);
+      var isPast = nowMins >= e;
+      var isCurrent = nowMins >= s && nowMins < e;
+
+      html += '<div class="lesson-row' + (isPast ? ' is-past' : '') + '"' +
+        (isCurrent ? ' style="background:#f9f7f3;border-radius:6px;padding:14px 10px;margin:0 -10px;"' : '') + '>' +
+        '<div class="lesson-time">' + l.start + ' – ' + l.end + '</div>' +
+        '<div class="lesson-dot ' + typeDotClass(l.type) + '"></div>' +
+        '<div class="lesson-info">' +
+          '<div class="lesson-subject">' + l.subject + (isCurrent ? ' &#9679;' : '') + '</div>' +
+          (l.teacher ? '<div class="lesson-detail">' + l.teacher + '</div>' : '') +
+        '</div>' +
+        '<div class="lesson-badge ' + typeBadgeClass(l.type) + '">' + typeLabel(l.type) + '</div>' +
+      '</div>';
+    }
+    document.getElementById(containerId).innerHTML = html;
+  }
+
+  /* ── CLOCK ── */
+  function updateClock() {
+    var n = new Date();
+    var h = n.getHours(), m = n.getMinutes(), s = n.getSeconds();
+    document.getElementById('live-clock').textContent =
+      (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('live-date').textContent =
+      days[n.getDay()] + ' ' + n.getDate() + ' ' + months[n.getMonth()] + ' ' + n.getFullYear();
+  }
+
+  /* ── MAIN LOOP ── */
+  function update() {
+    updateClock();
+    renderNow('harvey-now', harvey);
+    renderNow('harrison-now', harrison);
+    renderSchedule('harvey-schedule', harvey);
+    renderSchedule('harrison-schedule', harrison);
+  }
+
+  update();
+  setInterval(updateClock, 1000);       // clock every second
+  setInterval(update, 60000);           // full refresh every 60s
+
+})();
+</script>
+</body>
+</html>
