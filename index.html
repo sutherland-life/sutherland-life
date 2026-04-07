@@ -843,9 +843,74 @@
   .album-meta-row { display: flex; gap: 24px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid #e8e4dc; }
   .album-meta-pill { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9a96e; font-weight: 500; }
 
+  /* ── THIS WEEK ── */
+  .week-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .week-card { background: #fff; border: 1px solid #e8e4dc; border-radius: 8px; padding: 24px; transition: box-shadow 0.2s; }
+  .week-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  .week-card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 14px; }
+  .wci-cal { background: #f5f0e8; }
+  .wci-sch { background: #e8f5ee; }
+  .wci-upd { background: #e8eef5; }
+  .week-card-title { font-weight: 600; font-size: 15px; margin-bottom: 10px; }
+  .week-card-items { list-style: none; }
+  .week-card-items li { font-size: 13px; color: #6b6660; padding: 6px 0; border-bottom: 1px solid #f4f2ee; display: flex; align-items: center; gap: 8px; }
+  .week-card-items li:last-child { border-bottom: none; }
+  .wdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .wdot-g { background: #c9a96e; } .wdot-gr { background: #2e7d5b; } .wdot-b { background: #4a6fa5; }
+
+  /* ── WEATHER ── */
+  .weather-strip { display: flex; align-items: center; gap: 32px; background: linear-gradient(135deg,#1a1814 0%,#2a2620 100%); border-radius: 10px; padding: 28px 36px; color: #faf9f6; }
+  .weather-temp { font-size: 52px; font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+  .weather-temp sup { font-size: 22px; font-weight: 400; vertical-align: super; }
+  .weather-icon { font-size: 42px; }
+  .weather-desc { font-size: 14px; color: #a09889; }
+  .weather-location { font-size: 13px; color: #c9a96e; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .weather-divider { width: 1px; height: 56px; background: rgba(255,255,255,0.1); }
+  .weather-details { display: flex; gap: 28px; }
+  .weather-detail-item { text-align: center; }
+  .weather-detail-val { font-size: 18px; font-weight: 500; margin-bottom: 2px; }
+  .weather-detail-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #706b62; }
+  .weather-updated { font-size: 10px; color: #a09889; text-align: right; margin-top: 6px; letter-spacing: 0.04em; }
+
+  /* ── STATS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; }
+  .stat-card { text-align: center; background: #fff; border: 1px solid #e8e4dc; border-radius: 8px; padding: 24px 16px; transition: transform 0.2s; }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-number { font-family: 'Playfair Display',serif; font-size: 36px; font-weight: 600; color: #c9a96e; margin-bottom: 6px; }
+  .stat-label { font-size: 12px; color: #8a8479; letter-spacing: 0.04em; }
+  .stat-sub { font-size: 10px; color: #bbb5aa; margin-top: 4px; }
+
+  /* ── QUICK LINKS ── */
+  .qlinks-section { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .qlinks-col { padding: 0 32px; }
+  .qlinks-col:first-child { border-right: 1px solid #e8e4dc; padding-left: 0; }
+  .qlinks-col:last-child { padding-right: 0; }
+  .qlinks-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .qlinks-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: #fff; }
+  .qlinks-name { font-weight: 600; font-size: 16px; }
+  .qlinks-class { font-size: 11px; color: #8a8479; letter-spacing: 0.06em; }
+  .qlinks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qlink-btn { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: #fff; border: 1px solid #e8e4dc; border-radius: 8px; text-decoration: none; color: #1a1814; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .qlink-btn:hover { border-color: #c9a96e; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .qlink-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; color: #fff; }
+  .qi-teams { background: #464EB8; } .qi-seesaw { background: #4CAF50; } .qi-mymaths { background: #FF9800; }
+  .qi-wrm { background: #E91E63; } .qi-atom { background: #00BCD4; } .qi-ar { background: #9C27B0; }
+  .qi-pirls { background: #3F51B5; } .qi-adek { background: #607D8B; }
+  .qlink-text { display: flex; flex-direction: column; }
+  .qlink-sub { font-size: 10px; color: #a09889; font-weight: 400; margin-top: 1px; }
+  .qlinks-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a8479; margin-bottom: 10px; font-weight: 500; }
+
   @media (max-width: 900px) {
     .albums-grid { grid-template-columns: repeat(2, 1fr); }
     .album-view-header { padding: 16px 20px 0; }
+    .week-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .qlinks-section { grid-template-columns: 1fr; }
+    .qlinks-col { padding: 0 !important; border-right: none !important; border-bottom: 1px solid #e8e4dc; padding-bottom: 24px !important; margin-bottom: 24px; }
+    .qlinks-col:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0 !important; }
+    .weather-strip { flex-wrap: wrap; gap: 20px; padding: 24px; }
+    .weather-divider { display: none; }
+    .weather-temp { font-size: 40px; }
   }
 </style>
 </head>
@@ -932,53 +997,37 @@
     </div>
 
     <div class="pub-section">
-      <div class="sec-eyebrow">Coming Up</div>
-      <div class="sec-title">What's happening soon</div>
-      <div class="carousel-wrap" id="home-carousel">
-        <div class="carousel-track-outer">
-          <div class="carousel-track" id="home-carousel-track">
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">28</div><div class="cal-month">Apr</div></div>
-              <div class="cal-title">Perry's 40th Birthday</div>
-              <div class="cal-meta">What a time to be alive</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">1</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Perry's 40th Birthday Party</div>
-              <div class="cal-meta">Creating memories with the fam...</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">22</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Sutherland UK</div>
-              <div class="cal-meta">A trip back to where it started</div>
-              <div class="cal-tag tag-travel">Travel</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">27</div><div class="cal-month">May</div></div>
-              <div class="cal-title">IBIZA!!!</div>
-              <div class="cal-meta">Adult Play time...</div>
-              <div class="cal-tag tag-travel">Travel</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">30</div><div class="cal-month">May</div></div>
-              <div class="cal-title">Uncle Rowan's Birthday</div>
-              <div class="cal-meta">&nbsp;</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-            <div class="cal-card">
-              <div class="cal-date-row"><div class="cal-day">24</div><div class="cal-month">Jun</div></div>
-              <div class="cal-title">Danielle's Birthday</div>
-              <div class="cal-meta">What a time to be alive...</div>
-              <div class="cal-tag tag-family">Family</div>
-            </div>
-          </div>
+      <div class="sec-eyebrow" id="tw-eyebrow">This Week</div>
+      <div class="sec-title">At a glance</div>
+      <div class="week-grid">
+        <div class="week-card">
+          <div class="week-card-icon wci-cal">&#128197;</div>
+          <div class="week-card-title">Coming Up</div>
+          <ul class="week-card-items" id="tw-events">
+            <li><span class="wdot wdot-g"></span> Perry's 40th in <span id="tw-40"></span> days</li>
+            <li><span class="wdot wdot-g"></span> Perry's 40th Party in <span id="tw-party"></span> days</li>
+            <li><span class="wdot wdot-g"></span> Sutherland UK in <span id="tw-uk"></span> days</li>
+            <li><span class="wdot wdot-g"></span> IBIZA!!! in <span id="tw-ibiza"></span> days</li>
+          </ul>
         </div>
-        <div class="carousel-controls">
-          <div class="carousel-dots" id="home-carousel-dots"></div>
-          <button class="carousel-btn" id="home-prev" onclick="carouselMove('home', -1)" aria-label="Previous">&#8592;</button>
-          <button class="carousel-btn" id="home-next" onclick="carouselMove('home', 1)" aria-label="Next">&#8594;</button>
+        <div class="week-card">
+          <div class="week-card-icon wci-sch">&#127891;</div>
+          <div class="week-card-title">School</div>
+          <ul class="week-card-items">
+            <li><span class="wdot wdot-gr"></span> Online Learning Day (Tue)</li>
+            <li><span class="wdot wdot-gr"></span> Harvey: Maths, English, Science, Arabic</li>
+            <li><span class="wdot wdot-gr"></span> Harrison: English, Maths, P.E., LAMDA</li>
+            <li><span class="wdot wdot-gr"></span> Weekly tasks due Friday</li>
+          </ul>
+        </div>
+        <div class="week-card">
+          <div class="week-card-icon wci-upd">&#128221;</div>
+          <div class="week-card-title">Latest Update</div>
+          <ul class="week-card-items">
+            <li><span class="wdot wdot-b"></span> Easter Sunday Funday</li>
+            <li style="font-size:12px;color:#a09889;border:none;padding-top:4px;">5 April 2026</li>
+            <li style="font-size:12px;color:#8a8479;border:none;padding-top:2px;">Uncle Tim and Auntie Ruth joined for Afternoon Tea, Easter Roast and a few drinks...</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1028,10 +1077,45 @@
       </div>
     </div>
 
+    <div class="pub-section">
+      <div class="sec-eyebrow">Al Ain, UAE</div>
+      <div class="sec-title">Right now</div>
+      <div class="weather-strip" id="weather-widget">
+        <div>
+          <div class="weather-location">Al Ain, Abu Dhabi</div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="weather-icon" id="w-icon">&#9728;&#65039;</div>
+            <div class="weather-temp" id="w-temp">--<sup>&deg;C</sup></div>
+          </div>
+          <div class="weather-desc" id="w-desc">Loading...</div>
+        </div>
+        <div class="weather-divider"></div>
+        <div class="weather-details">
+          <div class="weather-detail-item"><div class="weather-detail-val" id="w-feels">--&deg;</div><div class="weather-detail-label">Feels like</div></div>
+          <div class="weather-detail-item"><div class="weather-detail-val" id="w-humidity">--%</div><div class="weather-detail-label">Humidity</div></div>
+          <div class="weather-detail-item"><div class="weather-detail-val" id="w-wind">-- km/h</div><div class="weather-detail-label">Wind</div></div>
+          <div class="weather-detail-item"><div class="weather-detail-val" id="w-high">--&deg;</div><div class="weather-detail-label">High</div></div>
+          <div class="weather-detail-item"><div class="weather-detail-val" id="w-low">--&deg;</div><div class="weather-detail-label">Low</div></div>
+        </div>
+      </div>
+      <div class="weather-updated" id="w-updated"></div>
+    </div>
+
   </div><!-- /pub-home -->
 
   <!-- CALENDAR TAB -->
   <div id="pub-calendar" class="pub-tab">
+    <div class="pub-section">
+      <div class="sec-eyebrow">2025 – 2026</div>
+      <div class="sec-title">Our year so far</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">5</div><div class="stat-label">Photo Albums</div><div class="stat-sub">62 photos &amp; videos</div></div>
+        <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Countries</div><div class="stat-sub">UAE, Ibiza &amp; UK soon!</div></div>
+        <div class="stat-card"><div class="stat-number">7</div><div class="stat-label">Blog Posts</div><div class="stat-sub">Since moving to Al Ain</div></div>
+        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">Yacht Days</div><div class="stat-sub">With the Constantines</div></div>
+        <div class="stat-card"><div class="stat-number" id="stat-40-num">--</div><div class="stat-label">Days to 40</div><div class="stat-sub" id="stat-40-sub">Perry's birthday</div></div>
+      </div>
+    </div>
     <div class="pub-section">
       <div class="sec-eyebrow">Family Calendar</div>
       <div class="cal-month-nav">
@@ -1196,9 +1280,17 @@
 
   <!-- SCHOOL DASHBOARD TAB -->
   <div id="pub-school" class="pub-tab">
+
+    <!-- QUOTE OF THE DAY -->
+    <div style="text-align:center;padding:32px 24px;border-bottom:1px solid #e8e4dc;background:linear-gradient(135deg,#faf9f6 0%,#f5f0e8 100%);">
+      <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#c9a96e;font-weight:500;margin-bottom:12px;">Quote of the Day</div>
+      <div id="school-quote" style="font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:#1a1814;max-width:680px;margin:0 auto;line-height:1.6;">"Believe you can and you're halfway there."</div>
+      <div id="school-quote-author" style="font-size:12px;color:#8a8479;margin-top:10px;letter-spacing:0.04em;">— Theodore Roosevelt</div>
+    </div>
+
     <div style="text-align:center;padding:36px 24px 24px;border-bottom:1px solid #e8e4dc;">
       <div class="sec-eyebrow">Brighton College Al Ain</div>
-      <div class="sec-title" style="margin-bottom:6px;">School Live Dashboard</div>
+      <div class="sec-title" style="margin-bottom:6px;">Live School Schedule</div>
       <div style="font-size:14px;color:#8a8479;">Online Learning Day</div>
       <div id="school-clock" style="font-family:'DM Sans',sans-serif;font-size:42px;font-weight:300;color:#1a1814;margin-top:16px;letter-spacing:0.04em;">--:--:--</div>
       <div id="school-date" style="font-size:13px;color:#a09889;margin-top:4px;"></div>
@@ -1234,6 +1326,57 @@
     <div style="text-align:center;padding:24px;border-top:1px solid #e8e4dc;font-size:11px;color:#a09889;letter-spacing:0.06em;">
       Auto-refreshes every 60 seconds
     </div>
+
+    <!-- QUICK LINKS (below dashboard) -->
+    <div class="pub-section">
+      <div class="sec-eyebrow">Brighton College Al Ain</div>
+      <div class="sec-title">Quick Links</div>
+      <div class="qlinks-section">
+        <!-- HARVEY LINKS -->
+        <div class="qlinks-col">
+          <div class="qlinks-header">
+            <div class="qlinks-avatar" style="background:#3d6b5e;">H</div>
+            <div><div class="qlinks-name">Harvey</div><div class="qlinks-class">Year 5 · 5S Salamander</div></div>
+          </div>
+          <div class="qlinks-label">Live Lessons</div>
+          <div class="qlinks-grid" style="margin-bottom:20px;">
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/31849175545089?p=8gevDzvuOinzaj41oq" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mrs Harnett<span class="qlink-sub">Science / Registration</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/39887952986106?p=NXVQhAR6do7awX6ERe" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mrs Hambleton<span class="qlink-sub">Maths / English</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/316298134276993?p=XRRXz1jRk0FY85l0A3" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mr Amer<span class="qlink-sub">Arabic</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/38628116145633?p=Vw4WTXT2CBgBhk3WPt" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mr Collins<span class="qlink-sub">English / Maths</span></div></a>
+          </div>
+          <div class="qlinks-label">Learning Platforms</div>
+          <div class="qlinks-grid">
+            <a class="qlink-btn" href="https://app.seesaw.me/#/student/login" target="_blank"><div class="qlink-icon qi-seesaw">S</div><div class="qlink-text">Seesaw<span class="qlink-sub">Tasks &amp; submissions</span></div></a>
+            <a class="qlink-btn" href="https://login.mymaths.co.uk/login" target="_blank"><div class="qlink-icon qi-mymaths">M</div><div class="qlink-text">MyMaths<span class="qlink-sub">Weekly assignment</span></div></a>
+            <a class="qlink-btn" href="https://infinity.whiteroseeducation.com/Home" target="_blank"><div class="qlink-icon qi-wrm">W</div><div class="qlink-text">WRM Infinity<span class="qlink-sub">Retrieval quiz</span></div></a>
+            <a class="qlink-btn" href="https://www.atomlearning.com/" target="_blank"><div class="qlink-icon qi-atom">A</div><div class="qlink-text">Atom Learning<span class="qlink-sub">Weekly assignment</span></div></a>
+            <a class="qlink-btn" href="https://global-zone61.renaissance-go.com/identityservice/sso/tenant?returnUrl=%2Fidentityservice%2Fsso%2Fconnect%2Fauthorize%2Fcallback%3Fclient_id%3Dstudentportallinux%26redirect_uri%3Dhttps%253A%252F%252Fglobal-zone61.renaissance-go.com%252Fstudentportal%252Fsignin-oidc%26response_type%3Did_token%26scope%3Dopenid%2520ren.profile%26response_mode%3Dform_post%26nonce%3D639095095054678459.MjY3NjZlMjEtNTQxNS00ODliLTg0OTMtZTE1NzMwMDM4YjNmYTVhMWQzYjMtMzYwNi00MjgxLTlkZGYtMGVhNjhkNDZjNTE1%26state%3DCfDJ8GBvKja6iDhGsbQlh-liKJUkN5-4vOQ3FEh8oWOqtIPOJ4XgT7pcVd8KoGa4VXcFsI-9y2JI4OsWuEaiQFf1wFEoNJUguE2hYnx_ePkj9kBfdh4s_UPCZt6blLPHK2V5HKfMzGSTHArAkfQ9YtkjkU7kUOXmDgE4BCDjJbRGXZ6eM1n--usgG30mxbq8DMyDRRg7FHR221EsOFWeGxW1GYZodXn2YbZGLar7U6MLCf_jEh79ab7GiOtnqJiJQFQSIskHMZmraLzvQRWieP42siibUqlbQOA4Q1d-QAM6D32pUDFpqurlYY6hxxIzEQuZIcPQXSUfDHz0j2Ydm_1HTVDZl3oRDWyIeJAta_Oj7V2L%26x-client-SKU%3DID_NETSTANDARD2_0%26x-client-ver%3D6.8.0.0" target="_blank"><div class="qlink-icon qi-ar">AR</div><div class="qlink-text">Accelerated Reader<span class="qlink-sub">Reading quizzes</span></div></a>
+            <a class="qlink-btn" href="https://assessmenthub.adek.ae/" target="_blank"><div class="qlink-icon qi-pirls">P</div><div class="qlink-text">PIRLs<span class="qlink-sub">ADEK assessment</span></div></a>
+          </div>
+        </div>
+        <!-- HARRISON LINKS -->
+        <div class="qlinks-col">
+          <div class="qlinks-header">
+            <div class="qlinks-avatar" style="background:#6b5a3d;">H</div>
+            <div><div class="qlinks-name">Harrison</div><div class="qlinks-class">Year 2 · 2S</div></div>
+          </div>
+          <div class="qlinks-label">Live Lessons</div>
+          <div class="qlinks-grid" style="margin-bottom:20px;">
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/33024156925941?p=YCMwAEvHw8ibb3MXU6" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mrs Campbell<span class="qlink-sub">English / Maths / Phonics</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/34377944586708?p=Vee6NVPwBr6KL2hiMg" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mrs Grice-Glover<span class="qlink-sub">P.E.</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/316298134276993?p=XRRXz1jRk0FY85l0A3" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Ms Rana<span class="qlink-sub">Arabic</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/38375946459312?p=8uSw8EBfRHeFYM07Oo" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Mrs Arendse<span class="qlink-sub">LAMDA</span></div></a>
+          </div>
+          <div class="qlinks-label">Learning Platforms</div>
+          <div class="qlinks-grid">
+            <a class="qlink-btn" href="https://app.seesaw.me/#/student/login" target="_blank"><div class="qlink-icon qi-seesaw">S</div><div class="qlink-text">Seesaw<span class="qlink-sub">Tasks &amp; submissions</span></div></a>
+            <a class="qlink-btn" href="https://teams.microsoft.com/meet/33024156925941?p=YCMwAEvHw8ibb3MXU6" target="_blank"><div class="qlink-icon qi-teams">T</div><div class="qlink-text">Ms Maria<span class="qlink-sub">Support teacher</span></div></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div><!-- /page-public -->
@@ -1970,6 +2113,133 @@
     if (pw) pw.focus();
   });
   window.addEventListener('resize', function() { initCarousel('home'); });
+
+  /* ════════════════════════════════════════
+     LIVE WEATHER (Open-Meteo — free, no key)
+  ════════════════════════════════════════ */
+  (function() {
+    var wIcons = {
+      0: '&#9728;&#65039;', 1: '&#127780;&#65039;', 2: '&#9925;', 3: '&#9729;&#65039;',
+      45: '&#127787;&#65039;', 48: '&#127787;&#65039;',
+      51: '&#127782;&#65039;', 53: '&#127782;&#65039;', 55: '&#127782;&#65039;',
+      61: '&#127783;&#65039;', 63: '&#127783;&#65039;', 65: '&#127783;&#65039;',
+      80: '&#127783;&#65039;', 81: '&#127783;&#65039;', 82: '&#127783;&#65039;',
+      95: '&#9889;', 96: '&#9889;', 99: '&#9889;'
+    };
+    var wDescs = {
+      0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+      45: 'Foggy', 48: 'Rime fog', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+      61: 'Light rain', 63: 'Moderate rain', 65: 'Heavy rain',
+      80: 'Light showers', 81: 'Showers', 82: 'Heavy showers',
+      95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Severe thunderstorm'
+    };
+    function fetchWeather() {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=24.19&longitude=55.76&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FDubai&forecast_days=1';
+      fetch(url).then(function(r){ return r.json(); }).then(function(d) {
+        var c = d.current;
+        var code = c.weather_code;
+        document.getElementById('w-temp').innerHTML = Math.round(c.temperature_2m) + '<sup>&deg;C</sup>';
+        document.getElementById('w-icon').innerHTML = wIcons[code] || '&#9728;&#65039;';
+        document.getElementById('w-desc').textContent = wDescs[code] || 'Clear';
+        document.getElementById('w-feels').textContent = Math.round(c.apparent_temperature) + '\u00b0';
+        document.getElementById('w-humidity').textContent = c.relative_humidity_2m + '%';
+        document.getElementById('w-wind').textContent = Math.round(c.wind_speed_10m) + ' km/h';
+        if (d.daily) {
+          document.getElementById('w-high').textContent = Math.round(d.daily.temperature_2m_max[0]) + '\u00b0';
+          document.getElementById('w-low').textContent = Math.round(d.daily.temperature_2m_min[0]) + '\u00b0';
+        }
+        var now = new Date();
+        document.getElementById('w-updated').textContent = 'Updated ' + now.getHours() + ':' + (now.getMinutes()<10?'0':'') + now.getMinutes();
+      }).catch(function(){});
+    }
+    fetchWeather();
+    setInterval(fetchWeather, 600000);
+  })();
+
+  /* ════════════════════════════════════════
+     COUNTDOWNS (This Week + Stats)
+  ════════════════════════════════════════ */
+  (function() {
+    var targets = {
+      'tw-40':    new Date(2026, 3, 28),
+      'tw-party': new Date(2026, 4, 1),
+      'tw-uk':    new Date(2026, 4, 22),
+      'tw-ibiza': new Date(2026, 4, 27)
+    };
+    var now = new Date();
+    now.setHours(0,0,0,0);
+
+    for (var id in targets) {
+      var diff = Math.ceil((targets[id] - now) / (1000*60*60*24));
+      var el = document.getElementById(id);
+      if (el) el.textContent = diff > 0 ? diff : '0';
+    }
+
+    // Perry's 40th stat card
+    var bday = new Date(2026, 3, 28);
+    var daysTo40 = Math.ceil((bday - now) / (1000*60*60*24));
+    var stat40Num = document.getElementById('stat-40-num');
+    var stat40Sub = document.getElementById('stat-40-sub');
+    if (stat40Num) stat40Num.textContent = daysTo40 > 0 ? daysTo40 : '0';
+    if (stat40Sub) stat40Sub.textContent = daysTo40 > 0 ? daysTo40 + ' days to go!' : "It's today!";
+
+    // This Week eyebrow — show current week range
+    var monday = new Date(now);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    var sunday = new Date(monday);
+    sunday.setDate(sunday.getDate() + 6);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var eyebrow = document.getElementById('tw-eyebrow');
+    if (eyebrow) {
+      eyebrow.textContent = monday.getDate() + ' ' + months[monday.getMonth()] + ' – ' + sunday.getDate() + ' ' + months[sunday.getMonth()] + ' ' + sunday.getFullYear();
+    }
+  })();
+
+  /* ════════════════════════════════════════
+     QUOTE OF THE DAY
+  ════════════════════════════════════════ */
+  (function() {
+    var quotes = [
+      { text: "Believe you can and you\u2019re halfway there.", author: "Theodore Roosevelt" },
+      { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+      { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+      { text: "You are braver than you believe, stronger than you seem, and smarter than you think.", author: "A.A. Milne" },
+      { text: "Every day is a new beginning. Take a deep breath, smile, and start again.", author: "Unknown" },
+      { text: "Difficult roads often lead to beautiful destinations.", author: "Zig Ziglar" },
+      { text: "Be the reason someone smiles today.", author: "Unknown" },
+      { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+      { text: "Dream big and dare to fail.", author: "Norman Vaughan" },
+      { text: "In the middle of every difficulty lies opportunity.", author: "Albert Einstein" },
+      { text: "Hardships often prepare ordinary people for an extraordinary destiny.", author: "C.S. Lewis" },
+      { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+      { text: "Keep your face always toward the sunshine and shadows will fall behind you.", author: "Walt Whitman" },
+      { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+      { text: "Start where you are. Use what you have. Do what you can.", author: "Arthur Ashe" },
+      { text: "You don\u2019t have to be perfect to be amazing.", author: "Unknown" },
+      { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+      { text: "Small steps every day lead to big changes.", author: "Unknown" },
+      { text: "Courage doesn\u2019t always roar. Sometimes it\u2019s the quiet voice at the end of the day saying \u2018I will try again tomorrow.\u2019", author: "Mary Anne Radmacher" },
+      { text: "Kindness is a language which the deaf can hear and the blind can see.", author: "Mark Twain" },
+      { text: "We may encounter many defeats but we must not be defeated.", author: "Maya Angelou" },
+      { text: "A champion is defined not by their wins but by how they can recover when they fall.", author: "Serena Williams" },
+      { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+      { text: "Happiness is not something ready-made. It comes from your own actions.", author: "Dalai Lama" },
+      { text: "No matter what people tell you, words and ideas can change the world.", author: "Robin Williams" },
+      { text: "Fall seven times, stand up eight.", author: "Japanese Proverb" },
+      { text: "The only limit to our realisation of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" },
+      { text: "What you do today can improve all your tomorrows.", author: "Ralph Marston" },
+      { text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
+      { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" }
+    ];
+    var today = new Date();
+    var dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,0)) / (1000*60*60*24));
+    var q = quotes[dayOfYear % quotes.length];
+    var qEl = document.getElementById('school-quote');
+    var aEl = document.getElementById('school-quote-author');
+    if (qEl) qEl.textContent = '\u201c' + q.text + '\u201d';
+    if (aEl) aEl.textContent = '\u2014 ' + q.author;
+  })();
 
 </script>
 
