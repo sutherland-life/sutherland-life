@@ -180,6 +180,64 @@
   }
   .pub-admin-btn:hover { background: #1a1814; color: #faf9f6; border-color: #1a1814; }
 
+  /* Dark mode toggle */
+  .theme-toggle {
+    background: none; border: 1px solid #d4cfc6; border-radius: 20px;
+    cursor: pointer; padding: 6px 12px; font-size: 14px; line-height: 1;
+    margin-left: 8px; transition: all 0.3s ease; color: #1a1814;
+  }
+  .theme-toggle:hover { border-color: #c9a96e; }
+
+  /* ── DARK MODE ── */
+  body.dark-mode { background: #1a1814; color: #e8e4dc; }
+  body.dark-mode .pub-nav { background: rgba(26,24,20,0.96); border-bottom-color: #2a2620; }
+  body.dark-mode .pub-nav-brand { color: #e8e4dc; }
+  body.dark-mode .pub-nav-btn { color: #8a8479; }
+  body.dark-mode .pub-nav-btn:hover, body.dark-mode .pub-nav-btn.active { color: #e8e4dc; }
+  body.dark-mode .pub-admin-btn { border-color: #3a3832; color: #8a8479; }
+  body.dark-mode .pub-admin-btn:hover { background: #faf9f6; color: #1a1814; border-color: #faf9f6; }
+  body.dark-mode .theme-toggle { border-color: #3a3832; color: #e8e4dc; }
+  body.dark-mode .theme-toggle:hover { border-color: #c9a96e; }
+  body.dark-mode .sec-eyebrow { color: #c9a96e; }
+  body.dark-mode .sec-title { color: #e8e4dc; }
+  body.dark-mode .pub-section { border-bottom-color: #2a2620; }
+  body.dark-mode .hero-text h1, body.dark-mode .hero-text h2 { color: #e8e4dc; }
+  body.dark-mode .hero-text p { color: #8a8479; }
+  body.dark-mode .blog-title { color: #e8e4dc; }
+  body.dark-mode .blog-title:hover { color: #c9a96e; }
+  body.dark-mode .blog-excerpt { color: #8a8479; }
+  body.dark-mode .blog-post { border-bottom-color: #2a2620; }
+  body.dark-mode .sidebar-heading { color: #c9a96e; border-bottom-color: #2a2620; }
+  body.dark-mode .sidebar-item { border-bottom-color: #2a2620; }
+  body.dark-mode .sidebar-item-title { color: #a09889; }
+  body.dark-mode .week-card { background: #222018; border-color: #2a2620; }
+  body.dark-mode .week-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  body.dark-mode .week-card-title { color: #e8e4dc; }
+  body.dark-mode .week-card-items li { color: #8a8479; border-bottom-color: #2a2620; }
+  body.dark-mode .stat-card { background: #222018; border-color: #2a2620; }
+  body.dark-mode .album-card { border-color: #2a2620; }
+  body.dark-mode .album-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  body.dark-mode .album-info { background: #222018; }
+  body.dark-mode .album-title { color: #e8e4dc; }
+  body.dark-mode .album-meta { color: #6b6660; }
+  body.dark-mode .gallery-caption { color: #a09889; }
+  body.dark-mode .cal-card { background: #222018; border-color: #2a2620; }
+  body.dark-mode .cal-day { color: #e8e4dc; }
+  body.dark-mode .cal-title { color: #e8e4dc; }
+  body.dark-mode .cal-sub { color: #6b6660; }
+  body.dark-mode .qlink-btn { background: #222018; border-color: #2a2620; color: #e8e4dc; }
+  body.dark-mode .qlink-btn:hover { border-color: #c9a96e; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+  body.dark-mode .qlink-sub { color: #6b6660; }
+  body.dark-mode .qlinks-col { border-color: #2a2620; }
+  body.dark-mode .mobile-menu { background: rgba(26,24,20,0.98); }
+  body.dark-mode .mobile-menu-btn { color: #8a8479; border-color: #2a2620; }
+  body.dark-mode .mobile-menu-btn:hover, body.dark-mode .mobile-menu-btn.active { color: #e8e4dc; }
+  body.dark-mode .mobile-menu-admin { border-color: #3a3832; color: #8a8479; }
+  body.dark-mode .hamburger-btn span { background: #e8e4dc; }
+  body.dark-mode .album-view-header { border-bottom-color: #2a2620; }
+  body.dark-mode .album-back-btn { color: #8a8479; }
+  body.dark-mode .album-back-btn:hover { color: #c9a96e; }
+
   /* Hamburger menu (mobile) */
   .hamburger-btn {
     display: none;
@@ -963,6 +1021,7 @@
       <button class="pub-nav-btn" onclick="pubTab('school', this)">School</button>
     </div>
     <button class="pub-admin-btn" onclick="showPage('page-gate')">Admin ↗</button>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()">&#9790;</button>
     <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()">
       <span></span><span></span><span></span>
     </button>
@@ -975,6 +1034,7 @@
     <button class="mobile-menu-btn" onclick="mobileNav('updates', this)">Updates</button>
     <button class="mobile-menu-btn" onclick="mobileNav('school', this)">School</button>
     <button class="mobile-menu-admin" onclick="toggleMobileMenu(); showPage('page-gate')">Admin ↗</button>
+    <button class="theme-toggle" style="margin-top:12px;" onclick="toggleDarkMode()">&#9790;</button>
   </div>
 
   <!-- HOME TAB -->
@@ -1218,16 +1278,6 @@
           <div class="album-info">
             <div class="album-title">Living on Holiday!</div>
             <div class="album-meta">2025–2026 · UAE &amp; Beyond</div>
-          </div>
-        </div>
-        <div class="album-card" onclick="openAlbum('valentines-2026')">
-          <div class="album-cover">
-            <div class="gallery-placeholder"><div class="gallery-placeholder-label">Coming soon</div></div>
-            <div class="album-count">0 photos</div>
-          </div>
-          <div class="album-info">
-            <div class="album-title">Valentine's at the Sofitel</div>
-            <div class="album-meta">14 February 2026 · Abu Dhabi</div>
           </div>
         </div>
       </div>
@@ -1644,6 +1694,26 @@
   }
 
   /* Mobile hamburger menu */
+  /* ════════════════════════════════════════
+     DARK MODE
+  ════════════════════════════════════════ */
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    var btn = document.getElementById('theme-toggle');
+    var isDark = document.body.classList.contains('dark-mode');
+    btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
+    try { localStorage.setItem('sl-dark', isDark ? '1' : '0'); } catch(e){}
+  }
+  (function() {
+    try {
+      if (localStorage.getItem('sl-dark') === '1') {
+        document.body.classList.add('dark-mode');
+        var btn = document.getElementById('theme-toggle');
+        if (btn) btn.innerHTML = '&#9788;';
+      }
+    } catch(e){}
+  })();
+
   function toggleMobileMenu() {
     var menu = document.getElementById('mobile-menu');
     var btn = document.getElementById('hamburger-btn');
@@ -2069,20 +2139,6 @@
         { src: 'images/albums/Living%20on%20holiday!%20(Random%20updates)/Family%20Fun%20Video.MOV', caption: 'Family Fun Video', video: true }
       ]
     },
-    'valentines-2026': {
-      title: "Valentine's at the Sofitel",
-      eyebrow: 'February 2026 · Abu Dhabi',
-      summary: "Perry surprised us both with a night at the Sofitel Abu Dhabi. It's become a bit of a tradition now. Dinner was extraordinary, the kids were blissfully unaware and brilliantly looked after. An evening well worth it.",
-      meta: ['14 February 2026', 'Abu Dhabi, UAE', 'Just the two of us'],
-      photos: [
-        { caption: 'Sofitel lobby', featured: true },
-        { caption: 'Dinner table' },
-        { caption: 'Sunset views' },
-        { caption: 'Dessert' },
-        { caption: 'The room' },
-        { caption: 'Morning after' }
-      ]
-    }
   };
 
   function openAlbum(id) {
